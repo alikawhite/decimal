@@ -1,0 +1,50 @@
+#ifndef SRC_S21_DECIMAL_H_
+#define SRC_S21_DECIMAL_H_
+
+#include <stdio.h>
+#include <math.h>
+
+typedef struct{
+    int bits[4];
+} s21_decimal;
+
+extern const s21_decimal s21_zero;
+
+// Основные функции
+
+// Перевод в decimal и обратно
+int s21_from_int_to_decimal(int src, s21_decimal *dst);
+int s21_from_float_to_decimal(float src, s21_decimal *dst);
+int s21_from_decimal_to_int(s21_decimal src, int *dst);
+int s21_from_decimal_to_float(s21_decimal src, float *dst);
+
+// Арифметические операторы
+
+int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
+int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
+int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
+int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
+int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
+
+// Операторы сравнения
+
+int s21_is_less(s21_decimal, s21_decimal);
+int s21_is_less_or_equal(s21_decimal, s21_decimal);
+int s21_is_greater(s21_decimal, s21_decimal);
+int s21_is_greater_or_equal(s21_decimal, s21_decimal);
+int s21_is_equal(s21_decimal, s21_decimal);
+int s21_is_not_equal(s21_decimal, s21_decimal);
+
+// Дополнительные функции
+int s21_floor(s21_decimal value, s21_decimal *result);
+int s21_round(s21_decimal value, s21_decimal *result);
+int s21_truncate(s21_decimal value, s21_decimal *result);
+int s21_negate(s21_decimal value, s21_decimal *result);
+
+/* Дополнительные функции - тут наши функции,
+которые могут понадобиться в процессе работы */
+
+int s21_init_func(s21_decimal *dst);
+
+#endif
+
