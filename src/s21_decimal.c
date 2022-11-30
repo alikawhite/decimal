@@ -9,9 +9,12 @@ union test
 };
 
 int main(){
-    // s21_decimal dst;
-    // int src = 2342;
+    s21_decimal dst;
+    float src = 0.0001;
+    s21_from_float_to_decimal(src, &dst);
+    
 
+    return 0;
 
 }
 
@@ -19,7 +22,7 @@ int s21_from_int_to_decimal(int src, s21_decimal *dst){
     *dst = s21_zero;
     if(src < 0) {
         src *= -1;
-        dst->bits[3] = 2147483648; // 0b10000000000000000000000000000000
+        setSign(dst); // 0b10000000000000000000000000000000
     }
     dst->bits[0] = src;
     return 0;
@@ -28,27 +31,32 @@ int s21_from_int_to_decimal(int src, s21_decimal *dst){
 int s21_from_float_to_decimal(float src, s21_decimal *dst) {
     *dst = s21_zero;
     int err = 0;
+    int scale = 0;
     if (src < 0) {
         src *= -1;
         setSign(dst);
     }
-    if (src > 0. && src < 1e-28) { // проверка дст
+    if (src > 1e-28 && src < 1) { // проверка дст
         int exp = getExp(src);
-        if (exp > 95) {
+        if (exp > 95 || exp < -95) {
             err = 1;
         } else {
-            for (; !((int)src), src * 10 =; scal)
+            for (; !((int)src); src *= 10) {
+                printf("\n%f     %d", src, scale);
+                scale++;
+                // if ()
+            }
+            //  пофиксить ошибку с единицей
+            if (scale < )
         }
     } else {
         err = 1;
     }
-
-
-
-
-
-    return 0;
+    printf(" \n%.10f.   %d ", src, scale);
+    return err;
 }
+
+
 // //  устанавливает минус
 int setSign(s21_decimal *dst) {
     dst->bits[3] |= 0x80000000;  //логическое или 

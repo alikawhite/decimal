@@ -14,6 +14,7 @@ extern const s21_decimal s21_zero;
 #define MAXLIMIT_ERROR 1  // число слишком велико или равно бесконечности
 #define MINLIMIT_ERROR 2  // число слишком мало или равно отрицательной бесконечности
 #define DIVBYZERO_ERROR 3  // деление на 0
+#define LIM 1e-28
 
 // Основные функции
 
