@@ -10,7 +10,13 @@ typedef struct{
 
 extern const s21_decimal s21_zero;
 
+#define is_nan(x) __builtin_isnan(x)
+#define MAXLIMIT_ERROR 1  // число слишком велико или равно бесконечности
+#define MINLIMIT_ERROR 2  // число слишком мало или равно отрицательной бесконечности
+#define DIVBYZERO_ERROR 3  // деление на 0
+
 // Основные функции
+
 
 // Перевод в decimal и обратно
 int s21_from_int_to_decimal(int src, s21_decimal *dst);
@@ -45,6 +51,10 @@ int s21_negate(s21_decimal value, s21_decimal *result);
 которые могут понадобиться в процессе работы */
 
 int s21_init_func(s21_decimal *dst);
+int getSign(s21_decimal dst);
+int getBit(s21_decimal d, int i);
+int setSign(s21_decimal *dst);
+int getExp(float src);
 
 #endif
 
