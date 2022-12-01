@@ -11,7 +11,7 @@ union test
 int main(){
     s21_decimal dst;
     float src = 0.0000001;
-    s21_from_float_to_decimal(src, &dst);
+
     
 
     return 0;
@@ -22,60 +22,88 @@ int s21_from_int_to_decimal(int src, s21_decimal *dst){
     *dst = s21_zero;
     if(src < 0) {
         src *= -1;
-        setSign(dst); // 0b10000000000000000000000000000000
+        setSign(dst); 
     }
     dst->bits[0] = src;
     return 0;
 }
 
-int s21_from_float_to_decimal(float src, s21_decimal *dst) {
-    *dst = s21_zero;
-    int err = 0, scale = 0;
-    if (src < 0) {
-        src *= -1;
-        setSign(dst);
+int s21_from_decimal_to_float(s21_decimal src, float* dst) {
+    double tmp = 0;
+    src = s21_zero;
+    for (int i = 0; i < 96; i++) {
+        tmp *= 2;
+        if (getBit(src, 95 - i))
+            tmp += 1;
     }
-    int exp = getExp(src);
-    if (src > 1e-28 && src < 1) { // проверка дст
-        if (exp > 95 || exp < -95) {
-            err = 1;
-        } else if (exp > -95 && exp < 0){
-            for (; !((int)src); src *= 10, scale++) {
-            }
-            for (int i = 8; i != 0; src *= 10, scale++, i--){
-            }
-            exp = getExp(src);
-            unsigned int bits = *((unsigned*)&src), mask = 0x400000;
-            setBit(dst, exp);
-            for (int j = exp - 1; mask; mask >>= 1, j--) {
-                if (bits & mask) 
-                    setBit(dst, j);
-            } // 8 - число знаков после запятой, 28 - степень
-            if (scale >= 28 + 8 + 3) 
-                err = MAXLIMIT_ERROR; 
-            setScale(dst, scale);
-        } else if (exp == 0 || exp > 0) {
-            s21_decimal tmp1 = {0}, tmp2 = {0}, tmp_res = {0};
-            float tmp_first = (float)((int)src);
-            float tmp_second = src - tmp_first;
-            unsigned int bits, mask = 0x400000;
-            if (tmp_second) {
-                for (int i = 8; i != 0, tmp_second *10; i--) {
-                }
-
-            }
-
-        } else {
-            err = 1; // не знаю, какая из ошибок
-        }
-    } else {
-        err = 1;
+    for (int j = getScale(src); j != 0; tmp /= 10, j--) {
     }
-    printf(" \n%.10f.   %d ", src, scale);
-    return err;
+    if (getSign(src)) {
+    tmp *= -1;
+    }
+    *dst = tmp;
+    return 0;
 }
 
-// //  устанавливает минус
+// int s21_from_float_to_decimal(float src, s21_decimal *dst) {
+//     *dst = s21_zero;
+//     int err = 0, scale = 0;
+//     if (src < 0) {
+//         src *= -1;
+//         setSign(dst);
+//     }
+//     int exp = getExp(src);
+//     if (src > 1e-28 && src < 1) { // проверка дст
+//         if (exp > -95 && exp < 0){
+//             for (; !((int)src); src *= 10, scale++) { // до первого числа
+//             }
+//             for (int i = 8; i != 0; src *= 10, scale++, i--){ // до 8 знаков после запятой
+//             }
+//             exp = getExp(src);
+//             unsigned int bits = *((unsigned*)&src), mask = 0x400000;
+//             setBit(dst, exp);
+//             for (int j = exp - 1; mask; mask >>= 1, j--) {
+//                 if (bits & mask) 
+//                     setBit(dst, j);
+//             } // 8 - число знаков после запятой, 28 - степень
+//             if (scale >= 28 + 8 + 3) 
+//                 err = MAXLIMIT_ERROR; 
+//             setScale(dst, scale);
+//         } else if (exp == 0 || exp > 0) {
+//             s21_decimal tmp1 = {0}, tmp2 = {0}, tmp_res = {0};
+//             float tmp_first = (float)((int)src);
+//             float tmp_second = src - tmp_first;
+//             unsigned int bits, mask = 0x400000;
+//             if (tmp_second) {
+//                 for (int i = 8; i != 0, tmp_second *10; i--) {
+//                 }
+//                 exp = getExp(tmp_second);
+//                 setBit(&tmp2, exp);
+//                 bits *((unsigned*)&tmp_second);
+//                 for (int j = exp - 1; mask; mask >>= 1, j--) {
+//                     if (bits & mask)
+//                         setBit(&tmp2, j);
+//                 }
+//             }
+//             unsigned int uns_tmp_first = (unsigned int)tmp_first;
+//             bits = uns_tmp_first, mask = 0x80000000;
+//             for (int j = 31; mask; mask >>= 1; j--) {
+//                 if (bits & mask)
+//                     setBit(&tmp1, j);
+//             }
+
+
+//         } else {
+//             err = 1;
+//         }
+//     } else {
+//         err = 1;
+//     }
+//     printf(" \n%.10f.   %d ", src, scale);
+//     return err;
+// }
+
+//  устанавливает минус
 int setSign(s21_decimal *dst) {
     dst->bits[3] |= 0x80000000;  //логическое или 
     return 1;
