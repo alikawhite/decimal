@@ -56,6 +56,8 @@ int getSign(s21_decimal dst);
 int getBit(s21_decimal d, int i);
 int setSign(s21_decimal *dst);
 int getExp(float src);
+int setBit(s21_decimal *dst, int i);
+int setScale(s21_decimal* dst, int scale);
 
 #endif
 
