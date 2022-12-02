@@ -45,6 +45,77 @@ int s21_from_decimal_to_float(s21_decimal src, float* dst) {
     return 0;
 }
 
+int setSign(s21_decimal *dst) {
+    dst->bits[3] |= 0x80000000;
+    return 1;
+}
+
+int getSign(s21_decimal dst) { return dst.bits[3] & 0x80000000 ? 1 : 0;}
+
+int getBit(s21_decimal d, int i) {
+    unsigned int mask = 1u << (i % 32);
+    int r = 0;
+    if (i <= 95 && i >= 0) {
+        r = d.bits[i / 32] & mask;
+    }
+    return r;
+}
+
+int getExp(float src) {
+    unsigned int bits = *((unsigned int *) & src);
+    int res = 0;
+    bits <<= 1;
+    res = res | (bits >> 24);
+    return res - 127;
+}
+
+int setBit(s21_decimal *dst, int i) {
+    int err = 0; 
+    unsigned int mask = 1;
+    if (i >= 0 && i <= 31) {
+        dst->bits[0] = dst->bits[0] | (mask << i);
+    } else if (i >= 32 && i <= 63) {
+        dst->bits[1] = dst->bits[2] | (mask << (i - 32));
+    } else if (i >= 64 && i <= 95) {
+        dst->bits[3] = dst->bits[4] | (mask << (i - 64));
+    } else {
+        err = -1;
+    }
+    return err;
+}
+
+int setScale(s21_decimal* dst, int scale) {
+    unsigned int mask = 0;
+    mask = mask | scale;
+    dst->bits[3] = dst->bits[3] | (mask << 16);
+    return 1;
+}
+
+int getScale(s21_decimal src) {
+  src.bits[3] <<= 8;
+  unsigned int res = src.bits[3] >> 24;
+  return res;
+}
+
+int s21_negate(s21_decimal value, s21_decimal *result) {
+    int err = 0;
+    if (getScale(value) > 28) {
+        err = 1;
+    }
+    else {
+        if (!getSign(value)) {
+            setSign(&value);
+        } else {
+            value.bits[3] &= 0b01111111111111111111111111111111;
+        }
+        *result = value;
+    }
+    return err;
+}
+
+
+
+
 // int s21_from_float_to_decimal(float src, s21_decimal *dst) {
 //     *dst = s21_zero;
 //     int err = 0, scale = 0;
@@ -102,50 +173,3 @@ int s21_from_decimal_to_float(s21_decimal src, float* dst) {
 //     printf(" \n%.10f.   %d ", src, scale);
 //     return err;
 // }
-
-//  устанавливает минус
-int setSign(s21_decimal *dst) {
-    dst->bits[3] |= 0x80000000;  //логическое или 
-    return 1;
-}
- // получает знак
-int getSign(s21_decimal dst) { return dst.bits[3] & 0x80000000 ? 1 : 0;}
-
-int getBit(s21_decimal d, int i) {
-    unsigned int mask = 1u << (i % 32);
-    int r = 0;
-    if (i <= 95 && i >= 0) {
-        r = d.bits[i / 32] & mask;
-    }
-    return r;
-}
-
-int getExp(float src) {
-    unsigned int bits = *((unsigned int *) & src);
-    int res = 0;
-    bits <<= 1; // убираем знак
-    res = res | (bits >> 24); // убираем мантиссу 
-    return res - 127;
-}
-
-int setBit(s21_decimal *dst, int i) {
-    int err = 0; 
-    unsigned int mask = 1;
-    if (i >= 0 && i <= 31) {
-        dst->bits[0] = dst->bits[0] | (mask << i);
-    } else if (i >= 32 && i <= 63) {
-        dst->bits[1] = dst->bits[2] | (mask << (i - 32));
-    } else if (i >= 64 && i <= 95) {
-        dst->bits[3] = dst->bits[4] | (mask << (i - 64));
-    } else {
-        err = -1;
-    }
-    return err;
-}
-
-int setScale(s21_decimal* dst, int scale) {
-    unsigned int mask = 0;
-    mask = mask | scale;
-    dst->bits[3] = dst->bits[3] | (mask << 16);
-    return 1;
-}

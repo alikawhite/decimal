@@ -15,6 +15,7 @@ extern const s21_decimal s21_zero;
 #define MINLIMIT_ERROR 2  // число слишком мало или равно отрицательной бесконечности
 #define DIVBYZERO_ERROR 3  // деление на 0
 #define LIM 1e-28
+#define CONVERTING_ERROR 1
 
 // Основные функции
 
@@ -58,6 +59,15 @@ int setSign(s21_decimal *dst);
 int getExp(float src);
 int setBit(s21_decimal *dst, int i);
 int setScale(s21_decimal* dst, int scale);
+int getScale(s21_decimal src);
+
+int s21_get_scale(s21_decimal src);
+int s21_get_bit(s21_decimal *dst, int bit);
+void s21_set_bit(s21_decimal *dst, int bit, int bit_status);
+void s21_reverse_shift(s21_decimal *value);
+void s21_shift(s21_decimal *value);
+void s21_decimal_sign(s21_decimal *dst, int sign_status);
+void s21_decimal_init(s21_decimal *dst);
 
 #endif
 
