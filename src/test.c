@@ -6127,37 +6127,37 @@ START_TEST(s21_div_1) {
 }
 END_TEST
 
-// START_TEST(s21_div_2) {
-//   s21_decimal src1, src2, result;
-//   int a = 32768;
-//   int b = -2;
-//   int res_our_dec = 0;
-//   s21_from_int_to_decimal(a, &src1);
-//   s21_from_int_to_decimal(b, &src2);
-//   int res_origin = -16384;
-//   int check = s21_div(src1, src2, &result);
-//   int check_origin = 0;
-//   s21_from_decimal_to_int(result, &res_our_dec);
-//   ck_assert_int_eq(res_our_dec, res_origin);
-//   ck_assert_int_eq(check, check_origin);
-// }
-// END_TEST
+START_TEST(s21_div_2) {
+  s21_decimal src1, src2, result;
+  int a = 32768;
+  int b = -2;
+  int res_our_dec = 0;
+  s21_from_int_to_decimal(a, &src1);
+  s21_from_int_to_decimal(b, &src2);
+  int res_origin = -16384;
+  int check = s21_div(src1, src2, &result);
+  int check_origin = 0;
+  s21_from_decimal_to_int(result, &res_our_dec);
+  ck_assert_int_eq(res_our_dec, res_origin);
+  ck_assert_int_eq(check, check_origin);
+}
+END_TEST
 
-// START_TEST(s21_div_3) {
-//   s21_decimal src1, src2, result;
-//   int a = 32768;
-//   int b = 2;
-//   int res_our_dec = 0;
-//   s21_from_int_to_decimal(a, &src1);
-//   s21_from_int_to_decimal(b, &src2);
-//   int res_origin = 16384;
-//   int check = s21_div(src1, src2, &result);
-//   int check_origin = 0;
-//   s21_from_decimal_to_int(result, &res_our_dec);
-//   ck_assert_int_eq(res_our_dec, res_origin);
-//   ck_assert_int_eq(check, check_origin);
-// }
-// END_TEST
+START_TEST(s21_div_3) {
+  s21_decimal src1, src2, result;
+  int a = 32768;
+  int b = 2;
+  int res_our_dec = 0;
+  s21_from_int_to_decimal(a, &src1);
+  s21_from_int_to_decimal(b, &src2);
+  int res_origin = 16384;
+  int check = s21_div(src1, src2, &result);
+  int check_origin = 0;
+  s21_from_decimal_to_int(result, &res_our_dec);
+  ck_assert_int_eq(res_our_dec, res_origin);
+  ck_assert_int_eq(check, check_origin);
+}
+END_TEST
 
 START_TEST(s21_div_4) {
   s21_decimal src1, src2, result, origin;

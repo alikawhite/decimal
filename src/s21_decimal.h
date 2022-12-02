@@ -16,6 +16,7 @@ extern const s21_decimal s21_zero;
 #define DIVBYZERO_ERROR 3  // деление на 0
 #define LIM 1e-28
 #define CONVERTING_ERROR 1
+#define FRACTIONAL 8
 
 // Основные функции
 
