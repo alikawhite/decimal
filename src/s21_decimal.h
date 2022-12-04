@@ -66,7 +66,13 @@ int setScale(s21_decimal* dst, int scale);
 int getScale(s21_decimal src);
 int getExp(float src);
 
-void big_decimal (s21_decimal value, s21_big_decimal *result);
+void big_decimal(s21_decimal value, s21_big_decimal *result);
+int big_getScale(s21_big_decimal src);
+int big_setBit(s21_big_decimal* d, int i);
+
+// арифметика с большим децималом
+void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
+
 
 #endif
 

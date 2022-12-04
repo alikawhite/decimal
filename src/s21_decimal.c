@@ -134,15 +134,7 @@ int s21_negate(s21_decimal value, s21_decimal *result) {
     return err;
 }
 
-int s21_truncate(s21_decimal value, s21_decimal *result) {
-    int err = 0;
-    if (getScale(value) > 28) {
-        err = 1;
-    }
-    return err;
-}
-
-void big_decimal (s21_decimal value, s21_big_decimal *result) {
+void big_decimal(s21_decimal value, s21_big_decimal *result) {
     for (int i = 0; i < 3; i++) {
         result->bits[i] = value.bits[i];
     }
@@ -153,6 +145,61 @@ void big_decimal (s21_decimal value, s21_big_decimal *result) {
     }
 } 
 
+int big_getScale(s21_big_decimal src) {
+  src.bits[7] <<= 8;
+  unsigned int res = src.bits[7] >> 24;
+  return res;
+}
 
+int s21_truncate(s21_decimal value, s21_decimal *result) {
+    int err = 0;
+    int scale = getScale(value);
+    if (scale > 28) {
+        err = 1;
+    } else if (scale) {
+        s21_big_decimal bd;
+        big_decimal(value, &bd);
+        s21_big_decimal ten = {{10, 0, 0, 0, 0, 0, 0}};
+        while (scale) {
+            s21_big_decimal tmp = {0};
 
+            bd = tmp;
+            scale--;
+        }
+    }
+    return err;
+}
+
+int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+    int err = 0;
+
+    return err;
+}
+
+void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
+    int tmp = 0;
+    for (int i = 0; i < 256; i++) {
+        if (get_bigBit(a, i) && get_bigBit(b, i) && tmp == 1) {
+            tmp = 1;
+            set_bigBit(result, i);
+        } else if (get_bigBit(a, i) && get_bigBit(b, i) && tmp == 0) {
+            tmp = 1;
+        } else if ((get_bigBit(a, i) || get_bigBit(b, i)) && tmp == 1) {
+            tmp = 1;
+        } else if ((get_bigBit(a, i) || get_bigBit(b, i)) && tmp == 0) {
+            big_setBit(result, i);
+        } else if ((!get_bigBit(a, i) && !get_bigBit(b, i)) && tmp == 1) {
+            big_setBit(result, i);
+            tmp = 0;
+        }
+    }
+}
+
+int big_setBit(s21_big_decimal* d, int i) {
+    int err = 0;
+    unsigned int mask = 1;
+    int val = i / 32;
+    d->bits[val] = d->bits[val] | (mask << (i - (32 * val)));
+    return err;
+}
 
