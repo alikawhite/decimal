@@ -4,12 +4,6 @@
 #include <stdio.h>
 #include <math.h>
 
-typedef struct{
-    int bits[4];
-} s21_decimal;
-
-extern const s21_decimal s21_zero;
-
 #define is_nan(x) __builtin_isnan(x)
 #define MAXLIMIT_ERROR 1  // число слишком велико или равно бесконечности
 #define MINLIMIT_ERROR 2  // число слишком мало или равно отрицательной бесконечности
@@ -17,6 +11,16 @@ extern const s21_decimal s21_zero;
 #define LIM 1e-28
 #define CONVERTING_ERROR 1
 #define FRACTIONAL 8
+
+typedef struct{
+    int bits[4];
+} s21_decimal;
+
+typedef struct {
+  unsigned int bits[7];
+} s21_big_decimal;
+
+extern const s21_decimal s21_zero;
 
 // Основные функции
 
@@ -55,20 +59,14 @@ int s21_negate(s21_decimal value, s21_decimal *result);
 
 int s21_init_func(s21_decimal *dst);
 int getSign(s21_decimal dst);
-int getBit(s21_decimal d, int i);
 int setSign(s21_decimal *dst);
-int getExp(float src);
+int getBit(s21_decimal d, int i);
 int setBit(s21_decimal *dst, int i);
 int setScale(s21_decimal* dst, int scale);
 int getScale(s21_decimal src);
+int getExp(float src);
 
-int s21_get_scale(s21_decimal src);
-int s21_get_bit(s21_decimal *dst, int bit);
-void s21_set_bit(s21_decimal *dst, int bit, int bit_status);
-void s21_reverse_shift(s21_decimal *value);
-void s21_shift(s21_decimal *value);
-void s21_decimal_sign(s21_decimal *dst, int sign_status);
-void s21_decimal_init(s21_decimal *dst);
+void big_decimal (s21_decimal value, s21_big_decimal *result);
 
 #endif
 
