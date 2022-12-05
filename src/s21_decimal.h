@@ -66,6 +66,9 @@ int setScale(s21_decimal* dst, int scale);
 int getScale(s21_decimal src);
 int getExp(float src);
 
+s21_decimal divTen(s21_decimal src);
+s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_big_decimal *reminder);
+
 void big_decimal(s21_decimal value, s21_big_decimal *result);
 int big_getScale(s21_big_decimal src);
 int big_setBit(s21_big_decimal* d, int i);

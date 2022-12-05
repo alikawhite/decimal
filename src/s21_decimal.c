@@ -193,3 +193,37 @@ int big_setBit(s21_big_decimal* d, int i) {
     return err;
 }
 
+s21_decimal divTen(s21_decimal src) {
+    s21_big_decimal src_long;
+    s21_big_decimal tmp;
+    s21_big_decimal ten = {{10, 0, 0, 0, 0, 0, 0}};
+    big_decimal(src, &src_long);
+    unsigned int scale = getScale(src);
+    if (scale > 0)
+        scale--;
+    int sign = getSign(src);
+    if (!sign) {
+        src.bits[3] = (scale << 16) | 0x80000000;
+    } else {
+        src.bits[3] = scale << 16;
+    }
+    src_long = div_big_end(src_long, ten, &tmp);
+    src.bits[0] = src_long.bits[0];
+    src.bits[1] = src_long.bits[1];
+    src.bits[2] = src_long.bits[2];
+    return src;
+}
+
+s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_big_decimal *reminder) {
+    s21_big_decimal res ={{0, 0, 0, 0, 0, 0, 0}};
+    s21_big_decimal two_long = {{2, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+    s21_big_decimal dividend = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}; 
+    for (int i = 7 - 1; i >= 0; i--) {
+        for (int j = 0; j < 32; j++) {
+            unsigned int tmp = value.bits[i];
+            tmp = tmp << j >> 31;
+            dividend = 
+        }
+    }
+    return res;
+}
