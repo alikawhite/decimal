@@ -72,6 +72,14 @@ s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_
 void big_decimal(s21_decimal value, s21_big_decimal *result);
 int big_getScale(s21_big_decimal src);
 int big_setBit(s21_big_decimal* d, int i);
+int big_getBit(s21_big_decimal dst, int i);
+int big_getSign(s21_big_decimal dst);
+
+void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
+
+void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second);
+void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result);
+void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 
 // арифметика с большим децималом
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);

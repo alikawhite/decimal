@@ -162,36 +162,76 @@ int s21_truncate(s21_decimal value, s21_decimal *result) {
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     int err = 0;
+    s21_decimal tmp = {0};
+    *result = tmp;
+    s21_big_decimal first = {0}, second = {0}, res = {0};
 
+
+fff;
     return err;
+}
+
+void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second) {
+    s21_big_decimal result = {0};
+    s21_big_decimal tmp1 = {0};
+    s21_big_decimal tmp2 = {0};
+
+    big_decimal(*value1, &tmp1);
+    big_decimal(*value2, &tmp2);
+    if (getScale(*value1) < getScale(*value2)) {
+gg;
+    }
+
+    
+}
+
+void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
+    s21_big_decimal a;//
+    s21_big_decimal tmp_result = {0};
+    int sign = big_getSign(*dst);
+    int scale = big_getScale(*dst);
+    for (int i = 0; i < value; i++) {
+
+    }
+
+}
+
+void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
+    s21_big_decimal tmp_a = a;
+    s21_big_decimal tmp = {0};
+    *result = tmp;
+    for (int i = 0; i < 192; i++) {
+        if (big_getBit(b, i)) {
+            s21_big_decimal tmp_res = {0};
+            big_add(tmp_a, *result, &tmp_res);
+            *result = tmp_res;
+        }
+        // shift big
+    }
+    }
 }
 
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
     int tmp = 0;
-    for (int i = 0; i < 256; i++) {
-        if (get_bigBit(a, i) && get_bigBit(b, i) && tmp == 1) {
+    s21_big_decimal zero = {0};
+    *result = zero;
+    for (int i = 0; i < 192; i++) {
+        if (big_getBit(a, i) && big_getBit(b, i) && tmp == 1) {
             tmp = 1;
-            set_bigBit(result, i);
-        } else if (get_bigBit(a, i) && get_bigBit(b, i) && tmp == 0) {
-            tmp = 1;
-        } else if ((get_bigBit(a, i) || get_bigBit(b, i)) && tmp == 1) {
-            tmp = 1;
-        } else if ((get_bigBit(a, i) || get_bigBit(b, i)) && tmp == 0) {
             big_setBit(result, i);
-        } else if ((!get_bigBit(a, i) && !get_bigBit(b, i)) && tmp == 1) {
+        } else if (big_getBit(a, i) && big_getBit(b, i) && tmp == 0) {
+            tmp = 1;
+        } else if ((big_getBit(a, i) || big_getBit(b, i)) && tmp == 1) {
+            tmp = 1;
+        } else if ((big_getBit(a, i) || big_getBit(b, i)) && tmp == 0) {
+            big_setBit(result, i);
+        } else if ((!big_getBit(a, i) && !big_getBit(b, i)) && tmp == 1) {
             big_setBit(result, i);
             tmp = 0;
         }
     }
 }
 
-int big_setBit(s21_big_decimal* d, int i) {
-    int err = 0;
-    unsigned int mask = 1;
-    int val = i / 32;
-    d->bits[val] = d->bits[val] | (mask << (i - (32 * val)));
-    return err;
-}
 
 s21_decimal divTen(s21_decimal src) {
     s21_big_decimal src_long;
@@ -228,3 +268,24 @@ s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_
     return res;
 }
 
+int big_getBit(s21_big_decimal dst, int i) {
+    int res = 0;
+    unsigned int mask = 1;
+    int value = i / 32;
+    if (dst.bits[value] && (mask << ( i - (32 * value)))) {
+        res = 1;
+    }
+    return res;
+}
+
+int big_setBit(s21_big_decimal* d, int i) {
+    int err = 0;
+    unsigned int mask = 1;
+    int val = i / 32;
+    d->bits[val] = d->bits[val] | (mask << (i - (32 * val)));
+    return err;
+}
+
+int big_getSign(s21_big_decimal dst){
+    return dst.bits[7] & 0x80000000 ? 1 : 0;
+}
