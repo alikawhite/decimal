@@ -227,3 +227,4 @@ s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_
     }
     return res;
 }
+
