@@ -9,18 +9,8 @@ union test
 };
 
 int main(){
-
     s21_decimal number;
-  // decimal: 2.0
-  // float: 2
-  // int: 1073741824
-  number.bits[0] = 0b00000000000000000000000000010100;
-  number.bits[1] = 0b00000000000000000000000000000000;
-  number.bits[2] = 0b00000000000000000000000000000000;
-    
-
     return 0;
-
 }
 
 int s21_from_int_to_decimal(int src, s21_decimal *dst){
