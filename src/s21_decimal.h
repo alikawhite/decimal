@@ -59,10 +59,10 @@ int s21_negate(s21_decimal value, s21_decimal *result);
 
 int s21_init_func(s21_decimal *dst);
 int getSign(s21_decimal dst);
-int setSign(s21_decimal *dst);
+void setSign(s21_decimal *dst);
 int getBit(s21_decimal d, int i);
 int setBit(s21_decimal *dst, int i);
-int setScale(s21_decimal* dst, int scale);
+void setScale(s21_decimal* dst, int scale);
 int getScale(s21_decimal src);
 int getExp(float src);
 
@@ -75,6 +75,9 @@ int big_setBit(s21_big_decimal* d, int i);
 int big_getBit(s21_big_decimal dst, int i);
 int big_getSign(s21_big_decimal dst);
 void big_cleanBit(s21_big_decimal* d, int i);
+void big_cleanScale(s21_big_decimal* dst);
+
+void to_zero(s21_big_decimal* dst);
 
 void big_shift(s21_big_decimal *dst, int opt);
 

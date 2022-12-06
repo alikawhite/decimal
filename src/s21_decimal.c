@@ -1,5 +1,7 @@
 #include "s21_decimal.h"
 
+// убрать отсюда нахуй эту константу, чтобы не доебались 
+
 const s21_decimal s21_zero = {0};
 
 union test
@@ -56,10 +58,7 @@ int s21_from_decimal_to_float(s21_decimal src, float* dst) {
     return 0;
 }
 
-int setSign(s21_decimal *dst) {
-    dst->bits[3] |= 0x80000000;
-    return 1;
-}
+void setSign(s21_decimal *dst) { dst->bits[3] |= 0x80000000; }
 
 int getSign(s21_decimal dst) { return dst.bits[3] & 0x80000000 ? 1 : 0;}
 
@@ -95,11 +94,10 @@ int setBit(s21_decimal *dst, int i) {
     return err;
 }
 
-int setScale(s21_decimal* dst, int scale) {
+void setScale(s21_decimal* dst, int scale) {
     unsigned int mask = 0;
     mask = mask | scale;
     dst->bits[3] = dst->bits[3] | (mask << 16);
-    return 1;
 }
 
 int getScale(s21_decimal src) {
@@ -186,13 +184,35 @@ gg;
 }
 
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
-    s21_big_decimal a;//
+    s21_big_decimal m = {10, 0, 0, 0, 0, 0, 0};
     s21_big_decimal tmp_result = {0};
     int sign = big_getSign(*dst);
     int scale = big_getScale(*dst);
     for (int i = 0; i < value; i++) {
-
+        big_mult(*dst, m, &tmp_result);
+        *dst = tmp_result;
+        to_zero(&tmp_result);
     }
+    *result = *dst;
+    big_setScale(result, scale + value);
+    if (sign)
+        big_set
+
+
+}
+
+void big_cleanScale(s21_big_decimal* dst) {
+  unsigned int mask = 0x10000000;
+  dst->bits[6] = dst->bits[6] & mask;
+}
+
+void to_zero(s21_big_decimal* dst) {
+  for (int i = 0; i < 7; i++) {
+    dst->bits[i] = 0;
+  }
+}
+
+int big_setSign(s21_big_decimal *dst) {
 
 }
 
@@ -206,7 +226,7 @@ void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
             big_add(tmp_a, *result, &tmp_res);
             *result = tmp_res;
         }
-        // shift big
+        big_shift(&tmp_a, 1);
     }
     
 }
