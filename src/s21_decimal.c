@@ -303,7 +303,7 @@ s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_
         for (int j = 0; j < 32; j++) {
             unsigned int tmp = value.bits[i];
             tmp = tmp << j >> 31;
-            // dividend = 
+            dividend = 
         }
     }
     return res;
