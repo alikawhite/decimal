@@ -177,7 +177,7 @@ void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* fir
     big_decimal(*value1, &tmp1);
     big_decimal(*value2, &tmp2);
     if (getScale(*value1) < getScale(*value2)) {
-gg;
+
     }
 
     
@@ -196,9 +196,7 @@ void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
     *result = *dst;
     big_setScale(result, scale + value);
     if (sign)
-        big_set
-
-
+        big_setSign(result); // that's all
 }
 
 void big_cleanScale(s21_big_decimal* dst) {
@@ -212,9 +210,7 @@ void to_zero(s21_big_decimal* dst) {
   }
 }
 
-int big_setSign(s21_big_decimal *dst) {
-
-}
+void big_setSign(s21_big_decimal *dst) { dst->bits[6] |= 0x80000000; }
 
 void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
     s21_big_decimal tmp_a = a;
