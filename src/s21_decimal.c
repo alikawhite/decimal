@@ -128,14 +128,14 @@ void big_decimal(s21_decimal value, s21_big_decimal *result) {
     }
     for (int i = 3; i < 8; i++) {
         result->bits[i] = 0;
-        if (i == 7)
+        if (i == 6)
             result->bits[i] = value.bits[3];
     }
 } 
 
 int big_getScale(s21_big_decimal src) {
-  src.bits[7] <<= 8;
-  unsigned int res = src.bits[7] >> 24;
+  src.bits[6] <<= 8;
+  unsigned int res = src.bits[6] >> 24;
   return res;
 }
 
@@ -157,7 +157,7 @@ int s21_truncate(s21_decimal value, s21_decimal *result) {
     }
     return err;
 }
-
+ // don't ready
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     int err = 0;
     s21_decimal tmp = {0};
@@ -165,10 +165,11 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     s21_big_decimal first = {0}, second = {0}, res = {0};
 
 
-fff;
+
     return err;
 }
 
+ // don't ready
 void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second) {
     s21_big_decimal result = {0};
     s21_big_decimal tmp1 = {0};
@@ -183,6 +184,7 @@ void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* fir
     
 }
 
+ // don't ready
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
     s21_big_decimal m = {{10, 0, 0, 0, 0, 0, 0}};
     s21_big_decimal tmp_result = {0};
@@ -197,7 +199,7 @@ void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
     big_cleanScale(result);
     big_setScale(result, scale + value);
     if (sign)
-        big_setSign(result); // that's all
+        big_setSign(result);
 }
 
 void big_setScale(s21_big_decimal* dst, int scale) {
@@ -219,6 +221,7 @@ void to_zero(s21_big_decimal* dst) {
 
 void big_setSign(s21_big_decimal *dst) { dst->bits[6] |= 0x80000000; }
 
+ // don't ready
 void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
     s21_big_decimal tmp_a = a;
     s21_big_decimal tmp = {0};
@@ -234,6 +237,7 @@ void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
     
 }
 
+ // don't ready
 void big_shift(s21_big_decimal *dst, int opt) {
     if (opt == 1) {
         for (int i = 191; i != 0; i--) {
@@ -247,12 +251,14 @@ void big_shift(s21_big_decimal *dst, int opt) {
     }
 }
 
+ // don't ready
 void big_cleanBit(s21_big_decimal* d, int i) {
   unsigned int mask = 1;
   int value = i / 32;
   d->bits[value] = d->bits[value] & (~(mask << (i - (32 * value))));
 }
 
+ // don't ready
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
     int tmp = 0;
     s21_big_decimal zero = {0};
@@ -274,6 +280,7 @@ void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
     }
 }
 
+ // don't ready
 s21_decimal divTen(s21_decimal src) {
     s21_big_decimal src_long;
     s21_big_decimal tmp;
@@ -295,6 +302,7 @@ s21_decimal divTen(s21_decimal src) {
     return src;
 }
 
+ // don't ready
 s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_big_decimal *reminder) {
     s21_big_decimal res ={{0, 0, 0, 0, 0, 0, 0}};
     // s21_big_decimal two_long = {{2, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
@@ -303,7 +311,7 @@ s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_
         for (int j = 0; j < 32; j++) {
             unsigned int tmp = value.bits[i];
             tmp = tmp << j >> 31;
-            dividend = 
+            // dividend = 
         }
     }
     return res;
@@ -322,8 +330,8 @@ int big_getBit(s21_big_decimal dst, int i) {
 int big_setBit(s21_big_decimal* d, int i) {
     int err = 0;
     unsigned int mask = 1;
-    int val = i / 32;
-    d->bits[val] = d->bits[val] | (mask << (i - (32 * val)));
+    int value = i / 32;
+    d->bits[value] = d->bits[value] | (mask << (i - (32 * value)));
     return err;
 }
 
