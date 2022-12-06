@@ -208,7 +208,26 @@ void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
         }
         // shift big
     }
+    
+}
+
+void big_shift(s21_big_decimal *dst, int opt) {
+    if (opt == 1) {
+        for (int i = 191; i != 0; i--) {
+            if (big_getBit(*dst, i - 1)) {
+                big_setBit(dst, i);
+            } else {
+                big_cleanBit(dst, i);
+            }
+        }
+        big_cleanBit(dst, 191);
     }
+}
+
+void big_cleanBit(s21_big_decimal* d, int i) {
+  unsigned int mask = 1;
+  int value = i / 32;
+  d->bits[value] = d->bits[value] & (~(mask << (i - (32 * value))));
 }
 
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
@@ -231,7 +250,6 @@ void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
         }
     }
 }
-
 
 s21_decimal divTen(s21_decimal src) {
     s21_big_decimal src_long;

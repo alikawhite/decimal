@@ -74,6 +74,9 @@ int big_getScale(s21_big_decimal src);
 int big_setBit(s21_big_decimal* d, int i);
 int big_getBit(s21_big_decimal dst, int i);
 int big_getSign(s21_big_decimal dst);
+void big_cleanBit(s21_big_decimal* d, int i);
+
+void big_shift(s21_big_decimal *dst, int opt);
 
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 
