@@ -11,7 +11,7 @@ union test
 };
 
 int main(){
-    s21_decimal number;
+    // s21_decimal number;
     return 0;
 }
 
@@ -29,7 +29,7 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst) { // посмотреть
     int err = 0, tmp = 0;
     if (getScale(src) != 0) {
         err = 1;
-    } else if (src.bits[1] == NULL && src.bits[2] == NULL && src.bits[0] != NULL) { // проверка на валидность децимала
+    } else if (src.bits[1] == NULL && src.bits[2] == NULL && src.bits[0] != NULL) { // проверка не работает!!!!
         for (int i = 0; i < 32; i++) {
             tmp *= 2;
             if (getBit(src, 31 - i))
@@ -184,7 +184,7 @@ void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* fir
 }
 
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
-    s21_big_decimal m = {10, 0, 0, 0, 0, 0, 0};
+    s21_big_decimal m = {{10, 0, 0, 0, 0, 0, 0}};
     s21_big_decimal tmp_result = {0};
     int sign = big_getSign(*dst);
     int scale = big_getScale(*dst);
@@ -194,9 +194,16 @@ void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
         to_zero(&tmp_result);
     }
     *result = *dst;
+    big_cleanScale(result);
     big_setScale(result, scale + value);
     if (sign)
         big_setSign(result); // that's all
+}
+
+void big_setScale(s21_big_decimal* dst, int scale) {
+    unsigned int mask = 0;
+    mask = mask | scale;
+    dst->bits[6] = dst->bits[6] | (mask << 16);
 }
 
 void big_cleanScale(s21_big_decimal* dst) {
@@ -290,13 +297,13 @@ s21_decimal divTen(s21_decimal src) {
 
 s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_big_decimal *reminder) {
     s21_big_decimal res ={{0, 0, 0, 0, 0, 0, 0}};
-    s21_big_decimal two_long = {{2, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-    s21_big_decimal dividend = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}; 
+    // s21_big_decimal two_long = {{2, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+    // s21_big_decimal dividend = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}; 
     for (int i = 7 - 1; i >= 0; i--) {
         for (int j = 0; j < 32; j++) {
             unsigned int tmp = value.bits[i];
             tmp = tmp << j >> 31;
-            dividend = 
+            // dividend = 
         }
     }
     return res;

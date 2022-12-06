@@ -77,6 +77,7 @@ int big_getSign(s21_big_decimal dst);
 void big_cleanBit(s21_big_decimal* d, int i);
 void big_cleanScale(s21_big_decimal* dst);
 void big_setSign(s21_big_decimal *dst);
+void big_setScale(s21_big_decimal* dst, int scale);
 
 void to_zero(s21_big_decimal* dst);
 
