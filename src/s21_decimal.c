@@ -338,6 +338,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
         big_sub(val1, val2, tmp);
     }
     // big dec to dec
+
     return err;
 }
 
@@ -362,6 +363,24 @@ void big_inverce(s21_big_decimal b, s21_big_decimal* d) {
   tmp.bits[5] = ~(b.bits[5]);
   s21_big_decimal plus_one = {{1, 0, 0, 0, 0, 0, 0}};
   big_add(plus_one, tmp, d);
+}
+
+int big_to_dec(s21_big_decimal dst, s21_decimal* result) {
+    int err = 0;
+    int scale = big_getScale(dst);
+    s21_big_decimal tmp;
+    if (scale <= 28 && dst.bits[3] == 0 && dst.bits[4] && dst.bits[5] == 0) {
+        result->bits[0] = dst.bits[0];
+        result->bits[1] = dst.bits[1];
+        result->bits[2] = dst.bits[2];
+        result->bits[3] = dst.bits[6];
+    } else {
+        while (scale && (scale > 28 || dst.bits[3] || dst.bits[4] || dst.bits[5])) {
+            
+
+        }
+    }
+    return err;
 }
 
 int big_not_null(s21_big_decimal dst) {
