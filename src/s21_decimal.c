@@ -159,38 +159,44 @@ int big_getScale(s21_big_decimal src) {
 //     return err;
 // }
 
-//  // don't ready
-// void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second) {
-//     s21_big_decimal result = {0};
-//     s21_big_decimal tmp1 = {0};
-//     s21_big_decimal tmp2 = {0};
-
-//     big_decimal(*value1, &tmp1);
-//     big_decimal(*value2, &tmp2);
-//     if (getScale(*value1) < getScale(*value2)) {
-
-//     }
-
-    
-// }
-
  // don't ready
-// void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
-//     s21_big_decimal m = {{10, 0, 0, 0, 0, 0, 0}};
-//     s21_big_decimal tmp_result = {0};
-//     int sign = big_getSign(*dst);
-//     int scale = big_getScale(*dst);
-//     for (int i = 0; i < value; i++) {
-//         big_mult(*dst, m, &tmp_result);
-//         *dst = tmp_result;
-//         to_zero(&tmp_result);
-//     }
-//     *result = *dst;
-//     big_cleanScale(result);
-//     big_setScale(result, scale + value);
-//     if (sign)
-//         big_setSign(result);
-// }
+void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second) {
+    s21_big_decimal result = {0};
+    s21_big_decimal tmp1 = {0};
+    s21_big_decimal tmp2 = {0};
+    big_decimal(*value1, &tmp1);
+    big_decimal(*value2, &tmp2);
+    if (getScale(*value1) < getScale(*value2)) {
+      scale_up(&tmp1, getScale(*value1) - getScale(*value2), &result);
+      *first = result;
+      *second = tmp2;
+    } else if (getScale(*value1) > getScale(*value2)) {
+      scale_up(&tmp2, getScale(*value1) - getScale(*value2), &result);
+      *second = result;
+      *first = tmp1;
+    } else {
+      *first = tmp1;
+      *second = tmp2;
+    }
+}
+
+// don't ready
+void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
+    s21_big_decimal m = {{10, 0, 0, 0, 0, 0, 0}};
+    s21_big_decimal tmp_result = {0};
+    int sign = big_getSign(*dst);
+    int scale = big_getScale(*dst);
+    for (int i = 0; i < value; i++) {
+        big_mult(*dst, m, &tmp_result);
+        *dst = tmp_result;
+        to_zero(&tmp_result);
+    }
+    *result = *dst;
+    big_cleanScale(result);
+    big_setScale(result, scale + value);
+    if (sign)
+        big_setSign(result);
+}
 
 void big_setScale(s21_big_decimal* dst, int scale) {
     unsigned int mask = 0;
@@ -330,8 +336,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
     int err = 0;
     s21_big_decimal val1 = {0}, val2 = {0};
     s21_big_decimal *tmp = {0};
-    big_decimal(value_1, &val1);
-    big_decimal(value_2, &val2);
+    to_one_scale(&value_1; value_2; &val1, &val2);
     if ((getSign(value_1) && getSign(value_2)) || (!getSign(value_1) && !getSign(value_2))) {
         big_add(val1, val2, tmp);
     } else {
