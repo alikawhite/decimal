@@ -180,7 +180,6 @@ void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* fir
     }
 }
 
-// don't ready
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
     s21_big_decimal m = {{10, 0, 0, 0, 0, 0, 0}};
     s21_big_decimal tmp_result = {0};
@@ -336,7 +335,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
     int err = 0;
     s21_big_decimal val1 = {0}, val2 = {0};
     s21_big_decimal *tmp = {0};
-    to_one_scale(&value_1; value_2; &val1, &val2);
+    to_one_scale(&value_1, &value_2, &val1, &val2);
     if ((getSign(value_1) && getSign(value_2)) || (!getSign(value_1) && !getSign(value_2))) {
         big_add(val1, val2, tmp);
     } else {
