@@ -139,58 +139,42 @@ int big_getScale(s21_big_decimal src) {
   return res;
 }
 
- // don't ready
-// int s21_truncate(s21_decimal value, s21_decimal *result) {
-//     int err = 0;
-//     int scale = getScale(value);
-//     if (scale > 28) {
-//         err = 1;
-//     } else if (scale) {
-//         s21_big_decimal bd;
-//         big_decimal(value, &bd);
-//         s21_big_decimal ten = {{10, 0, 0, 0, 0, 0, 0}};
-//         while (scale) {
-//             s21_big_decimal tmp = {0};
+void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second) {
+    s21_big_decimal result = {0};
+    s21_big_decimal tmp1 = {0};
+    s21_big_decimal tmp2 = {0};
+    big_decimal(*value1, &tmp1);
+    big_decimal(*value2, &tmp2);
+    if (getScale(*value1) < getScale(*value2)) {
+      scale_up(&tmp1, getScale(*value1) - getScale(*value2), &result);
+      *first = result;
+      *second = tmp2;
+    } else if (getScale(*value1) > getScale(*value2)) {
+      scale_up(&tmp2, getScale(*value1) - getScale(*value2), &result);
+      *second = result;
+      *first = tmp1;
+    } else {
+      *first = tmp1;
+      *second = tmp2;
+    }
+}
 
-//             bd = tmp;
-//             scale--;
-//         }
-//     }
-//     return err;
-// }
-
-//  // don't ready
-// void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second) {
-//     s21_big_decimal result = {0};
-//     s21_big_decimal tmp1 = {0};
-//     s21_big_decimal tmp2 = {0};
-
-//     big_decimal(*value1, &tmp1);
-//     big_decimal(*value2, &tmp2);
-//     if (getScale(*value1) < getScale(*value2)) {
-
-//     }
-
-    
-// }
-
- // don't ready
-// void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
-//     s21_big_decimal m = {{10, 0, 0, 0, 0, 0, 0}};
-//     s21_big_decimal tmp_result = {0};
-//     int sign = big_getSign(*dst);
-//     int scale = big_getScale(*dst);
-//     for (int i = 0; i < value; i++) {
-//         big_mult(*dst, m, &tmp_result);
-//         *dst = tmp_result;
-//         to_zero(&tmp_result);
-//     }
-//     *result = *dst;
-//     big_cleanScale(result);
-//     big_setScale(result, scale + value);
-//     if (sign)
-//         big_setSign(result);
-// }
+void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
+    s21_big_decimal m = {{10, 0, 0, 0, 0, 0, 0}};
+    s21_big_decimal tmp_result = {0};
+    int sign = big_getSign(*dst);
+    int scale = big_getScale(*dst);
+    for (int i = 0; i < value; i++) {
+        big_mult(*dst, m, &tmp_result);
+        *dst = tmp_result;
+        to_zero(&tmp_result);
+    }
+    *result = *dst;
+    big_cleanScale(result);
+    big_setScale(result, scale + value);
+    if (sign)
+        big_setSign(result);
+}
 
 void big_setScale(s21_big_decimal* dst, int scale) {
     unsigned int mask = 0;
@@ -267,43 +251,6 @@ void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
     }
 }
 
- // don't ready
-// s21_decimal divTen(s21_decimal src) {
-//     s21_big_decimal src_long;
-//     s21_big_decimal tmp;
-//     s21_big_decimal ten = {{10, 0, 0, 0, 0, 0, 0}};
-//     big_decimal(src, &src_long);
-//     unsigned int scale = getScale(src);
-//     if (scale > 0)
-//         scale--;
-//     int sign = getSign(src);
-//     if (!sign) {
-//         src.bits[3] = (scale << 16) | 0x80000000;
-//     } else {
-//         src.bits[3] = scale << 16;
-//     }
-//     src_long = div_big_end(src_long, ten, &tmp);
-//     src.bits[0] = src_long.bits[0];
-//     src.bits[1] = src_long.bits[1];
-//     src.bits[2] = src_long.bits[2];
-//     return src;
-// }
-
- // don't ready
-// s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_big_decimal *reminder) {
-//     s21_big_decimal res ={{0, 0, 0, 0, 0, 0, 0}};
-//     // s21_big_decimal two_long = {{2, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-//     // s21_big_decimal dividend = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}; 
-//     for (int i = 7 - 1; i >= 0; i--) {
-//         for (int j = 0; j < 32; j++) {
-//             unsigned int tmp = value.bits[i];
-//             tmp = tmp << j >> 31;
-//             // dividend = 
-//         }
-//     }
-//     return res;
-// }
-
 int big_getBit(s21_big_decimal dst, int i) {
     int res = 0;
     unsigned int mask = 1;
@@ -330,8 +277,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
     int err = 0;
     s21_big_decimal val1 = {0}, val2 = {0};
     s21_big_decimal *tmp = {0};
-    big_decimal(value_1, &val1);
-    big_decimal(value_2, &val2);
+    to_one_scale(&value_1, &value_2, &val1, &val2);
     if ((getSign(value_1) && getSign(value_2)) || (!getSign(value_1) && !getSign(value_2))) {
         big_add(val1, val2, tmp);
     } else {
@@ -430,3 +376,61 @@ int cleanBit(s21_decimal* dst, int i) {
   }
   return err;
 }
+
+
+ // don't ready
+// s21_decimal divTen(s21_decimal src) {
+//     s21_big_decimal src_long;
+//     s21_big_decimal tmp;
+//     s21_big_decimal ten = {{10, 0, 0, 0, 0, 0, 0}};
+//     big_decimal(src, &src_long);
+//     unsigned int scale = getScale(src);
+//     if (scale > 0)
+//         scale--;
+//     int sign = getSign(src);
+//     if (!sign) {
+//         src.bits[3] = (scale << 16) | 0x80000000;
+//     } else {
+//         src.bits[3] = scale << 16;
+//     }
+//     src_long = div_big_end(src_long, ten, &tmp);
+//     src.bits[0] = src_long.bits[0];
+//     src.bits[1] = src_long.bits[1];
+//     src.bits[2] = src_long.bits[2];
+//     return src;
+// }
+
+ // don't ready
+// s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_big_decimal *reminder) {
+//     s21_big_decimal res ={{0, 0, 0, 0, 0, 0, 0}};
+//     // s21_big_decimal two_long = {{2, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+//     // s21_big_decimal dividend = {{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}; 
+//     for (int i = 7 - 1; i >= 0; i--) {
+//         for (int j = 0; j < 32; j++) {
+//             unsigned int tmp = value.bits[i];
+//             tmp = tmp << j >> 31;
+//             // dividend = 
+//         }
+//     }
+//     return res;
+// }
+
+// don't ready
+// int s21_truncate(s21_decimal value, s21_decimal *result) {
+//     int err = 0;
+//     int scale = getScale(value);
+//     if (scale > 28) {
+//         err = 1;
+//     } else if (scale) {
+//         s21_big_decimal bd;
+//         big_decimal(value, &bd);
+//         s21_big_decimal ten = {{10, 0, 0, 0, 0, 0, 0}};
+//         while (scale) {
+//             s21_big_decimal tmp = {0};
+
+//             bd = tmp;
+//             scale--;
+//         }
+//     }
+//     return err;
+// }
