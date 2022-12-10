@@ -195,7 +195,6 @@ void to_zero(s21_big_decimal* dst) {
 
 void big_setSign(s21_big_decimal *dst) { dst->bits[6] |= 0x80000000; }
 
-
 void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
     s21_big_decimal tmp_a = a;
     s21_big_decimal tmp = {0};
@@ -288,7 +287,6 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
     return err;
 }
 
-
 int big_sub(s21_big_decimal first, s21_big_decimal second, s21_big_decimal* result) {
   s21_big_decimal d = {0};
   *result = d;
@@ -322,11 +320,28 @@ int big_to_dec(s21_big_decimal dst, s21_decimal* result) {
         result->bits[3] = dst.bits[6];
     } else {
         while (scale && (scale > 28 || dst.bits[3] || dst.bits[4] || dst.bits[5])) {
+          //  исправить скейЛ,  нужна для этого функция...
             
 
         }
     }
     return err;
+}
+
+int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+  int err = 0;
+  s21_big_decimal val1 = {0}, val2 = {0};
+  s21_big_decimal *tmp = {0};
+  to_one_scale(&value_1, &value_2, &val1, &val2);
+  if ((!getSign(value_1) && !getSign(value_2)) || (getSign(value_1) && !getSign(value_2))) {
+    big_add(val1, val2, tmp);
+  } else {
+    big_sub(val1, val2, tmp);
+  } 
+  // big_to_dec
+  // отработать несколько исключений
+  // при смене знака и использование нуля
+  return err;
 }
 
 int big_not_null(s21_big_decimal dst) {

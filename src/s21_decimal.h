@@ -69,7 +69,7 @@ int cleanBit(s21_decimal* dst, int i);
 int shift(s21_decimal* d, int opt);
 
 
-int big_to_dec(big_decimal big_d, s21_decimal* d);
+int big_to_dec(s21_big_decimal big_d, s21_decimal* d);
 
 s21_decimal divTen(s21_decimal src);
 s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_big_decimal *reminder);
