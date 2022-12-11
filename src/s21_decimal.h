@@ -101,9 +101,10 @@ void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 void big_sub(s21_big_decimal first, s21_big_decimal second, s21_big_decimal* result);
 void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second);
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result);
+void scale_down(s21_big_decimal* dst, int value, s21_big_decimal* result);
 void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
-
+void big_div10(s21_big_decimal value, s21_big_decimal *result);
 
 int s21_data_eq(const unsigned *data1, const unsigned *data2, int size);
 int s21_data_gt(const unsigned *data1, int sign1, const unsigned *data2,

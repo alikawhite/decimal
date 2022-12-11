@@ -160,20 +160,36 @@ void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* fir
 }
 
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
-    s21_big_decimal m = {{10, 0, 0, 0, 0, 0, 0}};
-    s21_big_decimal tmp_result = {0};
-    int sign = big_getSign(*dst);
-    int scale = big_getScale(*dst);
-    for (int i = 0; i < value; i++) {
-        big_mult(*dst, m, &tmp_result);
-        *dst = tmp_result;
-        to_zero(&tmp_result);
-    }
-    *result = *dst;
-    big_cleanScale(result);
-    big_setScale(result, scale + value);
-    if (sign)
-        big_setSign(result);
+  s21_big_decimal m = {{10, 0, 0, 0, 0, 0, 0}};
+  s21_big_decimal tmp_result = {0};
+  int sign = big_getSign(*dst);
+  int scale = big_getScale(*dst);
+  for (int i = 0; i < value; i++) {
+    big_mult(*dst, m, &tmp_result);
+    *dst = tmp_result;
+    to_zero(&tmp_result);
+  }
+  *result = *dst;
+  big_cleanScale(result);
+  big_setScale(result, scale + value);
+  if (sign)
+    big_setSign(result);
+}
+
+void scale_down(s21_big_decimal* dst, int value, s21_big_decimal* result) {
+  s21_big_decimal tmp_result = {0};
+  int sign = big_getSign(*dst);
+  int scale = big_getScale(*dst);
+  for (int i = 0; i < value; i++) {
+    big_div10(*dst, &tmp_result);
+    *dst = tmp_result;
+    to_zero(&tmp_result);
+  }
+  *result = *dst;
+  big_cleanScale(result);
+  big_setScale(result, scale - value);
+  if (sign)
+    big_setSign(result);
 }
 
 void big_setScale(s21_big_decimal* dst, int scale) {
@@ -300,7 +316,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
       big_setSign(tmp);      
     }
   }
-  // big dec to dec
+  big_to_dec(*tmp, result);
   return err;
 }
 
@@ -311,10 +327,10 @@ void big_sub(s21_big_decimal first, s21_big_decimal second, s21_big_decimal* res
     big_inverce(second, &d);
   }
   big_add(first, d, result);
-  for (int i = 191, bit = 0; i != 0, bit != 1; i--) {
+  for (int i = 191, bit = 0; bit != 1; i--) {
     bit = big_getBit(*result, i);
     if (bit)
-      cleanBit(result, i);
+      big_cleanBit(result, i);
   }
 }
 
@@ -331,22 +347,43 @@ void big_inverce(s21_big_decimal b, s21_big_decimal* d) {
 }
 
 int big_to_dec(s21_big_decimal dst, s21_decimal* result) {
-    int err = 0;
-    int scale = big_getScale(dst);
-    s21_big_decimal tmp;
-    if (scale <= 28 && dst.bits[3] == 0 && dst.bits[4] && dst.bits[5] == 0) {
-        result->bits[0] = dst.bits[0];
-        result->bits[1] = dst.bits[1];
-        result->bits[2] = dst.bits[2];
-        result->bits[3] = dst.bits[6];
-    } else {
-        while (scale && (scale > 28 || dst.bits[3] || dst.bits[4] || dst.bits[5])) {
-          //  исправить скейЛ,  нужна для этого функция...
-            
-
-        }
+  int err = 0;
+  int scale = big_getScale(dst);
+  int trunc;
+  s21_big_decimal tmp = dst;
+  s21_big_decimal tmp_result = {0};
+  if (scale <= 28 && tmp.bits[3] == 0 && tmp.bits[4] && tmp.bits[5] == 0) {
+    result->bits[0] = tmp.bits[0];
+    result->bits[1] = tmp.bits[1];
+    result->bits[2] = tmp.bits[2];
+    result->bits[3] = tmp.bits[6];
+  } else {
+    while (scale && (scale > 28 || tmp.bits[3] || tmp.bits[4] || tmp.bits[5])) {
+      scale_down(&tmp, 1, &tmp_result);
+      tmp = tmp_result;
+      trunc = tmp_result.bits[0] % 10;
+      to_zero(&tmp_result);
+      scale--;
     }
-    return err;
+    if (trunc > 5 || (trunc = 5 && big_getBit(tmp, 0))) {
+      s21_big_decimal tmp_trunc = {0};
+      s21_big_decimal tmp_trunc2 = {{1, 0, 0, 0, 0, 0, 0}};
+      big_add(tmp, tmp_trunc2, &tmp_trunc);
+      tmp = tmp_trunc;
+    }
+    if (tmp.bits[3] == 0 && tmp.bits[4] == 0 && tmp.bits[5] == 0) {
+      result->bits[0] = tmp.bits[0];
+      result->bits[1] = tmp.bits[1];
+      result->bits[2] = tmp.bits[2];
+      result->bits[3] = tmp.bits[6];
+    } else {
+      if (big_getSign(dst))
+        err = 2;
+      else
+        err = 1;
+    }
+  }
+  return err;
 }
 
 int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
@@ -373,7 +410,7 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       big_setSign(tmp);      
     }
   }
-  // big_to_dec
+  big_to_dec(*tmp, result);
   return err;
 }
 
@@ -490,11 +527,6 @@ void big_cleanSign(s21_big_decimal* value) {
 //     return err;
 // }
 
-
-
-
-
-// 
 
 // Арифметика
 // int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
@@ -707,6 +739,20 @@ int s21_div10(s21_decimal value, s21_decimal *result) {
   }
 
   return 0;
+}
+
+void big_div10(s21_big_decimal value, s21_big_decimal *result) {
+  unsigned long long buf = 0ull;
+  unsigned mod = 0;
+  for (int i = 0; i < 7; i++) {
+    result->bits[i] = value.bits[i];
+  }
+  for (int i = 5; i >= 0; i--) {
+    buf <<= 32;
+    mod = (buf + result->bits[i]) % 10;
+    result->bits[i] = (unsigned)((buf + result->bits[i]) / 10);
+    buf = mod;
+  }
 }
 
 int s21_is_null(s21_decimal value) {
