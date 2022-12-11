@@ -75,7 +75,7 @@ int cleanBit(s21_decimal* dst, int i);
 void cleanSign(s21_decimal* value);
 int shift(s21_decimal* d, int opt);
 
-
+int comparison(s21_big_decimal value_1, s21_big_decimal value_2);
 int big_to_dec(s21_big_decimal big_d, s21_decimal* d);
 
 s21_decimal divTen(s21_decimal src);
@@ -121,6 +121,7 @@ int s21_div10(s21_decimal value, s21_decimal *result);
 int s21_mul10(s21_decimal value, s21_decimal *result);
 int s21_mod10(s21_decimal value);
 int s21_get_scale(s21_decimal value);
+void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size);
 
 #endif
 

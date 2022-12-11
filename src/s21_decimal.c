@@ -289,6 +289,21 @@ int big_getSign(s21_big_decimal dst){
     return dst.bits[7] & 0x80000000 ? 1 : 0;
 }
 
+int comparison(s21_big_decimal value_1, s21_big_decimal value_2) {
+  int result = 0;
+    if (big_not_null(value_1) && big_not_null(value_1)) {
+      result = 0;
+    } else {
+      for (int i = 191; i >= 0; i++) {
+        if (big_getBit(value_1, i) > big_getBit(value_2, i)) {
+          result = 1;
+          break;
+        }
+      }
+    }
+  return result;
+}
+
 // сравнение модуля!!!!!
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
   int err = 0;
@@ -300,7 +315,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
   } else if (getSign(value_1) && !getSign(value_2)) { // - + +
     big_cleanSign(&val1); 
     big_cleanSign(&val2); 
-    if (s21_is_greater(value_1, value_2))  {
+    if (comparison(val1, val2))  {
       big_sub(val1, val2, tmp);
       big_setSign(tmp);
     } else {
@@ -309,7 +324,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
   } else { // + + -
     big_cleanSign(&val1); 
     big_cleanSign(&val2); 
-    if (s21_is_greater(value_1, value_2))  {
+    if (comparison(val1, val2))  {
       big_sub(val1, val2, tmp);
     } else {
       big_sub(val2, val1, tmp);
@@ -396,14 +411,14 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   } else if (getSign(value_1) && getSign(value_2)) { // - - - 
     big_cleanSign(&val1); 
     big_cleanSign(&val2); 
-    if (s21_is_greater(value_1, value_2))  {
+    if (comparison(val1, val2))  {
       big_sub(val1, val2, tmp);
       big_setSign(tmp);
     } else {
       big_sub(val2, val1, tmp);
     }
   } else { // + - +
-    if (s21_is_greater(value_1, value_2))  {
+    if (comparison(val1, val2))  {
       big_sub(val1, val2, tmp);
     } else {
       big_sub(val2, val1, tmp);
@@ -533,6 +548,23 @@ void big_cleanSign(s21_big_decimal* value) {
 //   s21_negate(value_2, &value_2);
 //   return s21_add(value_1, value_2, result);
 // }
+
+void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size) {
+  for (int i = 0; i < size; i++) {
+    result[i] = 0;
+  }
+  for (int i = 0; i < 3; i++) {
+    result[i] = value.bits[i];
+  }
+  for (int i = s21_get_scale(value); i < scale; i++) {
+    unsigned long long buf = 0ull;
+    for (int j = 0; j < size; j++) {
+      buf >>= 32;
+      buf += result[i] * 10;
+      result[i] = (unsigned)buf;
+    }
+  }
+}
 
 // Сравнения
 int s21_is_greater(s21_decimal value_1, s21_decimal value_2) {
@@ -772,6 +804,7 @@ int s21_mod10(s21_decimal value) {
   }
   return mod;
 }
+
 int s21_inc(s21_decimal *result) {
   unsigned long long buf = 0ull;
   for (int i = 0; i < 3; i++) {
@@ -781,6 +814,7 @@ int s21_inc(s21_decimal *result) {
   }
   return 0;
 }
+
 int s21_mul10(s21_decimal value, s21_decimal *result) {
   int status = 0;
   unsigned long long buf = 0ull;
@@ -798,6 +832,7 @@ int s21_mul10(s21_decimal value, s21_decimal *result) {
   }
   return status;
 }
+
 int s21_sum(const unsigned *val1, int sign1, const unsigned *val2, int sign2,
             unsigned *result, int *sign_result, int size) {
   int status = 0;
@@ -849,6 +884,7 @@ int s21_decimal_serialize(s21_decimal value, int fd) {
     return 1;
   }
 }
+
 int s21_decimal_deserialize(s21_decimal *value, int fd) {
 
   return (read(fd, value, sizeof(s21_decimal)) != EOF);
