@@ -311,6 +311,11 @@ void big_sub(s21_big_decimal first, s21_big_decimal second, s21_big_decimal* res
     big_inverce(second, &d);
   }
   big_add(first, d, result);
+  for (int i = 191, bit = 0; i != 0, bit != 1; i--) {
+    bit = big_getBit(*result, i);
+    if (bit)
+      cleanBit(result, i);
+  }
 }
 
 void big_inverce(s21_big_decimal b, s21_big_decimal* d) {
