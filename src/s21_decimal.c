@@ -298,6 +298,11 @@ int comparison(s21_big_decimal value_1, s21_big_decimal value_2) {
         if (big_getBit(value_1, i) > big_getBit(value_2, i)) {
           result = 1;
           break;
+        } else if (big_getBit(value_1, i) == big_getBit(value_2, i)){
+          continue;
+        } else {
+          result = 0;
+          break;
         }
       }
     }
