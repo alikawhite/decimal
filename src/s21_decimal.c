@@ -230,24 +230,25 @@ void big_cleanBit(s21_big_decimal* dst, int i) {
 }
 
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result) {
-    int tmp = 0;
-    s21_big_decimal zero = {0};
-    *result = zero;
-    for (int i = 0; i < 192; i++) {
-        if (big_getBit(a, i) && big_getBit(b, i) && tmp == 1) {
-            tmp = 1;
-            big_setBit(result, i);
-        } else if (big_getBit(a, i) && big_getBit(b, i) && tmp == 0) {
-            tmp = 1;
-        } else if ((big_getBit(a, i) || big_getBit(b, i)) && tmp == 1) {
-            tmp = 1;
-        } else if ((big_getBit(a, i) || big_getBit(b, i)) && tmp == 0) {
-            big_setBit(result, i);
-        } else if ((!big_getBit(a, i) && !big_getBit(b, i)) && tmp == 1) {
-            big_setBit(result, i);
-            tmp = 0;
-        }
+  int tmp = 0;
+  s21_big_decimal zero = {0};
+  *result = zero;
+  for (int i = 0; i < 192; i++) {
+    if (big_getBit(a, i) && big_getBit(b, i) && tmp == 1) {
+      tmp = 1;
+      big_setBit(result, i);
+    } else if (big_getBit(a, i) && big_getBit(b, i) && tmp == 0) {
+      tmp = 1;
+    } else if ((big_getBit(a, i) || big_getBit(b, i)) && tmp == 1) {
+      tmp = 1;
+    } else if ((big_getBit(a, i) || big_getBit(b, i)) && tmp == 0) {
+      big_setBit(result, i);
+    } else if ((!big_getBit(a, i) && !big_getBit(b, i)) && tmp == 1) {
+      big_setBit(result, i);
+      tmp = 0;
     }
+  }
+  result->bits[7] = a.bits[7];
 }
 
 int big_getBit(s21_big_decimal dst, int i) {
@@ -272,29 +273,44 @@ int big_getSign(s21_big_decimal dst){
     return dst.bits[7] & 0x80000000 ? 1 : 0;
 }
 
+// сравнение модуля!!!!!
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal* result) {
-    int err = 0;
-    s21_big_decimal val1 = {0}, val2 = {0};
-    s21_big_decimal *tmp = {0};
-    to_one_scale(&value_1, &value_2, &val1, &val2);
-    if ((getSign(value_1) && getSign(value_2)) || (!getSign(value_1) && !getSign(value_2))) {
-        big_add(val1, val2, tmp);
+  int err = 0;
+  s21_big_decimal val1 = {0}, val2 = {0};
+  s21_big_decimal *tmp = {0};
+  to_one_scale(&value_1, &value_2, &val1, &val2);
+  if ((getSign(value_1) && getSign(value_2)) || (!getSign(value_1) && !getSign(value_2))) { // + + + & - + -
+    big_add(val1, val2, tmp);
+  } else if (getSign(value_1) && !getSign(value_2)) { // - + +
+    big_cleanSign(&val1); 
+    big_cleanSign(&val2); 
+    if (s21_is_greater(value_1, value_2))  {
+      big_sub(val1, val2, tmp);
+      big_setSign(tmp);
     } else {
-        big_sub(val1, val2, tmp);
+      big_sub(val2, val1, tmp);
     }
-    // big dec to dec
-
-    return err;
+  } else { // + + -
+    big_cleanSign(&val1); 
+    big_cleanSign(&val2); 
+    if (s21_is_greater(value_1, value_2))  {
+      big_sub(val1, val2, tmp);
+    } else {
+      big_sub(val2, val1, tmp);
+      big_setSign(tmp);      
+    }
+  }
+  // big dec to dec
+  return err;
 }
 
-int big_sub(s21_big_decimal first, s21_big_decimal second, s21_big_decimal* result) {
+void big_sub(s21_big_decimal first, s21_big_decimal second, s21_big_decimal* result) {
   s21_big_decimal d = {0};
   *result = d;
-  if (big_not_null(second) == 1) {
+  if (big_not_null(second)) {
     big_inverce(second, &d);
   }
   big_add(first, d, result);
-  return 1;
 }
 
 void big_inverce(s21_big_decimal b, s21_big_decimal* d) {
@@ -333,14 +349,26 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   s21_big_decimal val1 = {0}, val2 = {0};
   s21_big_decimal *tmp = {0};
   to_one_scale(&value_1, &value_2, &val1, &val2);
-  if ((!getSign(value_1) && !getSign(value_2)) || (getSign(value_1) && !getSign(value_2))) {
+  if ((!getSign(value_1) && getSign(value_2)) || (getSign(value_1) && !getSign(value_2))) { // + - - & - - +
     big_add(val1, val2, tmp);
-  } else {
-    big_sub(val1, val2, tmp);
-  } 
+  } else if (getSign(value_1) && getSign(value_2)) { // - - - 
+    big_cleanSign(&val1); 
+    big_cleanSign(&val2); 
+    if (s21_is_greater(value_1, value_2))  {
+      big_sub(val1, val2, tmp);
+      big_setSign(tmp);
+    } else {
+      big_sub(val2, val1, tmp);
+    }
+  } else { // + - +
+    if (s21_is_greater(value_1, value_2))  {
+      big_sub(val1, val2, tmp);
+    } else {
+      big_sub(val2, val1, tmp);
+      big_setSign(tmp);      
+    }
+  }
   // big_to_dec
-  // отработать несколько исключений
-  // при смене знака и использование нуля
   return err;
 }
 
@@ -392,6 +420,13 @@ int cleanBit(s21_decimal* dst, int i) {
   return err;
 }
 
+void cleanSign(s21_decimal* value) {
+  value->bits[3] &= 0b01111111111111111111111111111111;
+}
+
+void big_cleanSign(s21_big_decimal* value) {
+  value->bits[7] &= 0b01111111111111111111111111111111;
+}
 
  // don't ready
 // s21_decimal divTen(s21_decimal src) {
