@@ -25,38 +25,38 @@ int s21_from_int_to_decimal(int src, s21_decimal *dst){
     return 0;
 }
 
-int s21_from_decimal_to_int(s21_decimal src, int *dst) { // посмотреть, что ретернить
-    int err = 0, tmp = 0;
-    if (getScale(src) != 0) {
-        err = 1;
-    } else if (1 == 1) { // проверка не работает!!!!
-        for (int i = 0; i < 32; i++) {
-            tmp *= 2;
-            if (getBit(src, 31 - i))
-                tmp += 1;
-        }
-        if (getSign(src))
-            tmp *= -1;
-    }
-    *dst = tmp;
-    return err;
-}
+// int s21_from_decimal_to_int(s21_decimal src, int *dst) { // посмотреть, что ретернить
+//     int err = 0, tmp = 0;
+//     if (getScale(src) != 0) {
+//         err = 1;
+//     } else if (1 == 1) { // проверка не работает!!!!
+//         for (int i = 0; i < 32; i++) {
+//             tmp *= 2;
+//             if (getBit(src, 31 - i))
+//                 tmp += 1;
+//         }
+//         if (getSign(src))
+//             tmp *= -1;
+//     }
+//     *dst = tmp;
+//     return err;
+// }
 
-int s21_from_decimal_to_float(s21_decimal src, float* dst) {
-    double tmp = 0;
-    src = s21_zero;
-    for (int i = 0; i < 96; i++) {
-        tmp *= 2;
-        if (getBit(src, 95 - i))
-            tmp += 1;
-    }
-    for (int j = getScale(src); j != 0; tmp /= 10, j--) {
-    }
-    if (getSign(src))
-        tmp *= -1;
-    *dst = tmp;
-    return 0;
-}
+// int s21_from_decimal_to_float(s21_decimal src, float* dst) {
+//     double tmp = 0;
+//     src = s21_zero;
+//     for (int i = 0; i < 96; i++) {
+//         tmp *= 2;
+//         if (getBit(src, 95 - i))
+//             tmp += 1;
+//     }
+//     for (int j = getScale(src); j != 0; tmp /= 10, j--) {
+//     }
+//     if (getSign(src))
+//         tmp *= -1;
+//     *dst = tmp;
+//     return 0;
+// }
 
 void setSign(s21_decimal *dst) { dst->bits[3] |= 0x80000000; }
 
@@ -106,21 +106,21 @@ int getScale(s21_decimal src) {
   return res;
 }
 
-int s21_negate(s21_decimal value, s21_decimal *result) {
-    int err = 0;
-    if (getScale(value) > 28) {
-        err = 1;
-    }
-    else {
-        if (!getSign(value)) {
-            setSign(&value);
-        } else {
-            value.bits[3] &= 0b01111111111111111111111111111111;
-        }
-        *result = value;
-    }
-    return err;
-}
+// int s21_negate(s21_decimal value, s21_decimal *result) {
+//     int err = 0;
+//     if (getScale(value) > 28) {
+//         err = 1;
+//     }
+//     else {
+//         if (!getSign(value)) {
+//             setSign(&value);
+//         } else {
+//             value.bits[3] &= 0b01111111111111111111111111111111;
+//         }
+//         *result = value;
+//     }
+//     return err;
+// }
 
 void big_decimal(s21_decimal value, s21_big_decimal *result) {
     for (int i = 0; i < 3; i++) {
@@ -449,3 +449,321 @@ int cleanBit(s21_decimal* dst, int i) {
 //     }
 //     return err;
 // }
+
+
+
+
+
+// 
+
+// Арифметика
+// int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
+//   s21_negate(value_2, &value_2);
+//   return s21_add(value_1, value_2, result);
+// }
+
+// Сравнения
+int s21_is_greater(s21_decimal value_1, s21_decimal value_2) {
+  int result = 0;
+  if (s21_is_null(value_1) && s21_is_null(value_1)) {
+    result = 0;
+  } else {
+    unsigned buf1[6] = {0, 0, 0, 0, 0, 0};
+    unsigned buf2[6] = {0, 0, 0, 0, 0, 0};
+    int scale = s21_get_scale(value_1) > s21_get_scale(value_2)
+                    ? s21_get_scale(value_1)
+                    : s21_get_scale(value_2);
+    s21_to_scale(value_1, scale, buf1, 6);
+    s21_to_scale(value_2, scale, buf1, 6);
+    result = s21_data_gt(buf1, value_1.bits[3] & 0x80000000, buf2,
+                         value_2.bits[3] & 0x80000000, 6);
+  }
+  return result;
+}
+int s21_is_equal(s21_decimal value_1, s21_decimal value_2) {
+  int result = 0;
+  if (s21_is_null(value_1) && s21_is_null(value_2)) {
+    result = 1;
+  } else {
+    if ((value_1.bits[3] & 0x80000000) == (value_2.bits[3] & 0x80000000)) {
+      unsigned buf1[6] = {0, 0, 0, 0, 0, 0};
+      unsigned buf2[6] = {0, 0, 0, 0, 0, 0};
+      int scale = s21_get_scale(value_1) > s21_get_scale(value_2)
+                      ? s21_get_scale(value_1)
+                      : s21_get_scale(value_2);
+      s21_to_scale(value_1, scale, buf1, 6);
+      s21_to_scale(value_2, scale, buf2, 6);
+      result = s21_data_eq(buf1, buf2, 6);
+    }
+  }
+  return result;
+}
+int s21_is_not_equal(s21_decimal value_1, s21_decimal value_2) {
+  return !s21_is_equal(value_1, value_2);
+}
+int s21_is_greater_or_equal(s21_decimal value_1, s21_decimal value_2) {
+  return s21_is_greater(value_1, value_2) || s21_is_equal(value_1, value_2);
+}
+int s21_is_less(s21_decimal value_1, s21_decimal value_2) {
+  return s21_is_greater(value_2, value_1);
+}
+int s21_is_less_or_equal(s21_decimal value_1, s21_decimal value_2) {
+  return s21_is_greater_or_equal(value_2, value_1);
+}
+
+// Переводы
+int s21_from_int_to_decimal(int src, s21_decimal *dst) {
+  for (int i = 0; i < 4; i++) {
+    dst->bits[i] = 0;
+  }
+  dst->bits[0] = src & 0x7fffffff;
+  dst->bits[3] = src & 0x80000000;
+
+  return 0;
+}
+int s21_from_decimal_to_int(s21_decimal src, int *dst) {
+  int result = 1;
+  s21_truncate(src, &src);
+  if (!(src.bits[2] || src.bits[2] || (src.bits[0] & 0x80000000))) {
+    *dst = (src.bits[3] & 0x80000000) | (src.bits[0] & ~0x80000000);
+    result = 0;
+  }
+  return result;
+}
+int s21_from_decimal_to_float(s21_decimal src, float *dst) {
+  int scale = s21_get_scale(src);
+  while (!(src.bits[2] == 0 && src.bits[1] == 0 && src.bits[0] > 100000000)) {
+    s21_div10(src, &src);
+    scale--;
+  }
+  if (src.bits[0] <= 10000000) {
+    src.bits[0] += 5;
+    s21_div10(src, &src);
+    scale--;
+  }
+  char buf[32] = {0};
+  sprintf(buf, "%c%de%d", (src.bits[3] & 0x80000000 ? '-' : '+'), src.bits[0],
+          -scale);
+  sscanf(buf, "%e", dst);
+  return 0;
+}
+
+// Другое
+int s21_negate(s21_decimal value, s21_decimal *result) {
+  for (int i = 0; i < 4; i++) {
+    result->bits[i] = value.bits[i];
+  }
+  result->bits[3] =
+      (value.bits[3] & 0x7fffffff) | ((~value.bits[3]) & 0x80000000);
+  printf("Ok\n\n");
+  return 0;
+}
+
+int s21_truncate(s21_decimal value, s21_decimal *result) {
+  for (int i = 0; i < 3; i++) {
+    result->bits[i] = value.bits[i];
+  }
+  result->bits[3] = ((~value.bits[3]) & 0x80000000);
+  int scale = s21_get_scale(value);
+  for (; scale >= 0; scale--) {
+    s21_div10(*result, result);
+  }
+
+  return 0;
+}
+
+int s21_round(s21_decimal value, s21_decimal *result) {
+  for (int i = 0; i < 3; i++) {
+    result->bits[i] = value.bits[i];
+  }
+  result->bits[3] = ((~value.bits[3]) & 0x80000000);
+  int scale = s21_get_scale(value);
+  for (; scale >= 1; scale--) {
+    s21_div10(*result, result);
+  }
+  if (scale) {
+    if (s21_mod10(value) >= 5) {
+      s21_div10(*result, result);
+      s21_inc(result);
+    } else {
+      s21_div10(*result, result);
+    }
+  }
+
+  return 0;
+}
+
+int s21_floor(s21_decimal value, s21_decimal *result) {
+  for (int i = 0; i < 3; i++) {
+    result->bits[i] = value.bits[i];
+  }
+  result->bits[3] = ((~value.bits[3]) & 0x80000000);
+  int scale = s21_get_scale(value);
+  for (; scale >= 1; scale--) {
+    s21_div10(*result, result);
+  }
+  if (scale) {
+    if (result->bits[3] && (s21_mod10(value) > 0)) {
+      s21_div10(*result, result);
+      s21_inc(result);
+    } else {
+      s21_div10(*result, result);
+    }
+  }
+  return 0;
+}
+
+// Вспомогательное
+int s21_data_eq(const unsigned *data1, const unsigned *data2, int size) {
+  int flag = 1;
+  for (int i = size - 1; i >= 0; i--) {
+    flag = flag && (data1[i] == data2[i]);
+  }
+  return flag;
+}
+
+int s21_data_gt(const unsigned *data1, int sign1, const unsigned *data2,
+                int sign2, int size) {
+  int result = 0;
+  int flag = 0;
+  if (!sign1 > !sign2) {
+    // positive / negative
+    result = 1;
+  } else if (!sign1 < !sign2) {
+    // negative / positive
+    result = 0;
+  } else if (sign1 == sign2) {
+    // p/p n/n
+    for (int i = 0; (i < size) && (!flag); i++) {
+      if (data1[i] > data2[i]) {
+        flag = 1;
+        result = 1;
+      } else if (data1[i] < data2[i]) {
+        flag = 1;
+        result = 0;
+      }
+    }
+    if (!sign1 == 0) {
+      // negative / negative
+      if (flag) {
+        result = !result;
+      }
+    }
+  }
+  return result;
+}
+
+int s21_div10(s21_decimal value, s21_decimal *result) {
+  unsigned long long buf = 0ull;
+  unsigned mod = 0;
+  for (int i = 0; i < 4; i++) {
+    result->bits[i] = value.bits[i];
+  }
+  for (int i = 2; i >= 0; i--) {
+    buf <<= 32;
+    mod = (buf + result->bits[i]) % 10;
+    result->bits[i] = (unsigned)((buf + result->bits[i]) / 10);
+    buf = mod;
+  }
+
+  return 0;
+}
+
+int s21_is_null(s21_decimal value) {
+  return (value.bits[0] == 0 && value.bits[1] == 0 && value.bits[2] == 0);
+}
+
+int s21_get_scale(s21_decimal value) { return (value.bits[3] >> 16) & 0xff; }
+
+int s21_mod10(s21_decimal value) {
+  unsigned long long buf = 0ull;
+  unsigned mod = 0;
+  for (int i = 2; i >= 0; i--) {
+    buf <<= 32;
+    mod = (buf + value.bits[i]) % 10;
+    value.bits[i] = (unsigned)((buf + value.bits[i]) / 10);
+    buf = mod;
+  }
+  return mod;
+}
+int s21_inc(s21_decimal *result) {
+  unsigned long long buf = 0ull;
+  for (int i = 0; i < 3; i++) {
+    buf += result->bits[i] + 1;
+    result->bits[i] = (unsigned)buf;
+    buf >>= 32;
+  }
+  return 0;
+}
+int s21_mul10(s21_decimal value, s21_decimal *result) {
+  int status = 0;
+  unsigned long long buf = 0ull;
+  for (int i = 0; i < 3; i++) {
+    buf += value.bits[i] * 10;
+    value.bits[i] = (unsigned)buf;
+    buf >>= 32;
+  }
+  if (!buf) {
+    for (int i = 0; i < 4; i++) {
+      result->bits[i] = value.bits[i];
+    }
+  } else {
+    status = 1;
+  }
+  return status;
+}
+int s21_sum(const unsigned *val1, int sign1, const unsigned *val2, int sign2,
+            unsigned *result, int *sign_result, int size) {
+  int status = 0;
+  if (sign1 == sign2) {
+    unsigned long long buf = 0ull;
+    for (int i = 0; i < size; i++) {
+      buf += val1[i] + val2[i];
+      result[i] = (unsigned)buf;
+      buf >>= 32;
+    }
+    *sign_result = sign1;
+  } else if (!sign1 > !sign2) {
+    unsigned long long buf = 0ull;
+    for (int i = 0; i < size; i++) {
+      buf = buf + (unsigned long long)val1[i] - (unsigned long long)val2[i];
+      result[i] = (unsigned)buf;
+      buf >>= 32;
+    }
+    *sign_result = (buf >> 31);
+  } else {
+    status = s21_sum(val2, sign2, val1, sign1, result, sign_result, size);
+  }
+  return status;
+}
+
+// int s21_div2(const unsigned *val1, const unsigned *val2, unsigned *result,
+//              int size) {
+//   unsigned val1_copy[size];
+//   for (int i = 0; i < size; i++) {
+//     val1_copy[i] = val1[i];
+//   }
+//   int buf = 0;
+//   while (val1[0] || val1[1] || val1[2]) {
+//     s21_mul2(val1_copy, val1_copy);
+//     if (s21_data_gt(val1_copy, 0, val2, 0, size) ||
+//         s21_data_eq(val1_copy, val2, size)) {
+//       s21_sum(val1_copy, 0, val2, 1, val1_copy, &buf, size);
+//       result[0] |= 1;
+//     }
+//   }
+//   return 0;
+// }
+
+int s21_decimal_serialize(s21_decimal value, int fd) {
+  if (fd) {
+    write(fd, &value, sizeof(s21_decimal));
+    return 0;
+  } else {
+    return 1;
+  }
+}
+int s21_decimal_deserialize(s21_decimal *value, int fd) {
+
+  return (read(fd, value, sizeof(s21_decimal)) != EOF);
+}

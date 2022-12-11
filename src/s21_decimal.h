@@ -1,8 +1,14 @@
 #ifndef SRC_S21_DECIMAL_H_
 #define SRC_S21_DECIMAL_H_
 
-#include <stdio.h>
+#include <fcntl.h>
+#include <float.h>
 #include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #define is_nan(x) __builtin_isnan(x)
 #define MAXLIMIT_ERROR 1  // число слишком велико или равно бесконечности
@@ -87,19 +93,30 @@ int big_not_null(s21_big_decimal dst);
 void big_inverce(s21_big_decimal b, s21_big_decimal* d);
 
 void to_zero(s21_big_decimal* dst);
-
 void big_shift(s21_big_decimal *dst, int opt);
-
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 int big_sub(s21_big_decimal first, s21_big_decimal second, s21_big_decimal* result);
-
 void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second);
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result);
 void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
-
-// арифметика с большим децималом
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 
+
+int s21_data_eq(const unsigned *data1, const unsigned *data2, int size);
+int s21_data_gt(const unsigned *data1, int sign1, const unsigned *data2,
+                int sign2, int size);
+int s21_is_null(s21_decimal value);
+int s21_inc(s21_decimal *result);
+int s21_sum(const unsigned *val1, int sign1, const unsigned *val2, int sign2,
+            unsigned *result, int *sign_result, int size);
+// int s21_div2(const unsigned *val1, const unsigned *val2, unsigned *result,
+            //  int size);
+int s21_decimal_serialize(s21_decimal value, int fd);
+int s21_decimal_deserialize(s21_decimal *value, int fd);
+int s21_div10(s21_decimal value, s21_decimal *result);
+int s21_mul10(s21_decimal value, s21_decimal *result);
+int s21_mod10(s21_decimal value);
+int s21_get_scale(s21_decimal value);
 
 #endif
 
