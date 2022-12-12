@@ -123,5 +123,8 @@ int s21_mod10(s21_decimal value);
 int s21_get_scale(s21_decimal value);
 void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size);
 
+int s21_div10mem(unsigned *result, int size);
+
+
 #endif
 
