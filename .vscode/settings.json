@@ -1,0 +1,10 @@
+{
+  "editor.fontFamily": "JetBrains Mono",
+  "editor.tabSize": 2,
+  "files.associations": {
+    "*.check": "c",
+    "ostream": "c",
+    "*.tcc": "c",
+    "s21_decimal.h": "c"
+  }
+}

@@ -1,0 +1,79 @@
+#include <check.h>
+
+#include "s21_decimal.h"
+
+#test s21_truncate_test
+int fd = open("s21_truncate.input", O_RDONLY);
+#ifdef DECIMALIZATOR
+int output = open("s21_truncate.output", O_WRONLY | O_CREAT | O_TRUNC,
+                  S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+
+s21_decimal a, et, res;
+while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&et, fd)) {
+  s21_truncate(a, &res);
+#ifndef DECIMALIZATOR
+  ck_assert((s21_is_equal(et, res)));
+#else
+  s21_decimal_serialize(res, output);
+#endif
+}
+
+close(fd);
+
+#test s21_negate_test
+int fd = open("s21_negate.input", O_RDONLY);
+#ifdef DECIMALIZATOR
+int output = open("s21_negate.output", O_WRONLY | O_CREAT | O_TRUNC,
+                  S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+
+s21_decimal a, et, res;
+while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&et, fd)) {
+  s21_negate(a, &res);
+#ifndef DECIMALIZATOR
+  ck_assert((s21_is_equal(et, res)));
+#else
+  s21_decimal_serialize(res, output);
+#endif
+}
+
+close(fd);
+
+#test s21_floor_test
+int fd = open("s21_floor.input", O_RDONLY);
+#ifdef DECIMALIZATOR
+int output = open("s21_floor.output", O_WRONLY | O_CREAT | O_TRUNC | O_TRUNC,
+                  S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+
+s21_decimal a, et, res;
+while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&et, fd)) {
+  s21_floor(a, &res);
+#ifndef DECIMALIZATOR
+  ck_assert((s21_is_equal(et, res)));
+#else
+  s21_decimal_serialize(res, output);
+#endif
+}
+
+close(fd);
+
+#test s21_round_test
+int fd = open("s21_round.input", O_RDONLY);
+#ifdef DECIMALIZATOR
+int output = open("s21_round.output", O_WRONLY | O_CREAT | O_TRUNC | O_TRUNC,
+                  S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+
+s21_decimal a, et, res;
+while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&et, fd)) {
+  s21_round(a, &res);
+#ifndef DECIMALIZATOR
+  ck_assert((s21_is_equal(et, res)));
+#else
+  s21_decimal_serialize(res, output);
+#endif
+}
+
+close(fd);
