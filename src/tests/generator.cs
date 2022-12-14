@@ -579,30 +579,9 @@ class Program
     }
   }
 
-  public static void s21_from_float_to_decimal()
-  {
-    string path = "s21_from_float_to_decimal.input";
-    using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate)))
-    {
 
-    }
-  }
-  public static void s21_from_decimal_to_int()
-  {
-    string path = "s21_from_decimal_to_int.input";
-    using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate)))
-    {
 
-    }
-  }
-  public static void s21_from_decimal_to_float()
-  {
-    string path = "s21_from_decimal_to_float.input";
-    using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate)))
-    {
 
-    }
-  }
   public static void s21_floor()
   {
     string path = "s21_floor.input";
@@ -670,6 +649,79 @@ class Program
       writer.Write((decimal)Int32.MinValue);
       writer.Write(Int32.MaxValue);
       writer.Write((decimal)Int32.MaxValue);
+    }
+  }
+
+  public static void s21_from_decimal_to_int()
+  {
+    string path = "s21_from_decimal_to_int.input";
+    using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate)))
+    {
+      for (decimal i = -100m; i < 100m; i++)
+      {
+        writer.Write(i);
+        writer.Write((int)i);
+      }
+      for (decimal i = -100000m; i < 10000m; i += 1000m)
+      {
+        writer.Write(i);
+        writer.Write((int)i);
+      }
+      for (decimal i = -3.1415926535897932384626433833m; i < 3.1415926535897932384626433833m; i += 3.1415926535897932384626433833m / 20m)
+      {
+        writer.Write(i);
+        writer.Write(decimal.ToInt32(i));
+      }
+      writer.Write(decimal.ToInt32(Int32.MinValue));
+      writer.Write(Int32.MinValue);
+      writer.Write(decimal.ToInt32(Int32.MaxValue));
+      writer.Write(Int32.MaxValue);
+
+    }
+  }
+
+  public static void s21_from_float_to_decimal()
+  {
+    string path = "s21_from_float_to_decimal.input";
+    using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate)))
+    {
+      for (float i = -100; i < 100; i += 1f)
+      {
+        writer.Write(i);
+        writer.Write((decimal)i);
+      }
+      for (float i = -1000000; i < 1000000; i += 1000f)
+      {
+        writer.Write(i);
+        writer.Write((decimal)i);
+      }
+      for (float i = -3.141592653589793238462643f * 100f; i < 3.141592653589793238462643f * 100f; i += 3.141592653589793238462643f * 100f / 20f)
+      {
+        writer.Write(i);
+        writer.Write((decimal)i);
+      }
+    }
+  }
+  public static void s21_from_decimal_to_float()
+  {
+    string path = "s21_from_float_to_decimal.input";
+    using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate)))
+    {
+      for (decimal i = -100m; i < 100m; i += 1m)
+      {
+        writer.Write(i);
+        writer.Write((float)i);
+      }
+      for (decimal i = -1000000m; i < 1000000m; i += 1000m)
+      {
+        writer.Write(i);
+        writer.Write((float)i);
+      }
+      for (decimal i = -3.1415926535897932384626433833m * 100m; i < -3.1415926535897932384626433833m * 100m; i += -3.1415926535897932384626433833m * 100m / 20m)
+      {
+        writer.Write(i);
+        writer.Write((float)i);
+      }
     }
   }
 }

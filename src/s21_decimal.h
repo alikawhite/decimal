@@ -36,10 +36,12 @@ extern const s21_decimal s21_zero;
 // Перевод в decimal и обратно
 int s21_from_int_to_decimal(int src,
                             s21_decimal *dst); // s21_decimal_conversion.o
-int s21_from_float_to_decimal(float src, s21_decimal *dst);
+int s21_from_float_to_decimal(
+    float src, s21_decimal *dst); // s21_decimal_from_float(...).o
 int s21_from_decimal_to_int(s21_decimal src,
                             int *dst); // s21_decimal_conversion.o
-int s21_from_decimal_to_float(s21_decimal src, float *dst);
+int s21_from_decimal_to_float(s21_decimal src,
+                              float *dst); // s21_decimal_from_float(...).o
 
 // Арифметические операторы
 
@@ -114,14 +116,12 @@ void big_div10(s21_big_decimal value, s21_big_decimal *result);
 int big_mul10(s21_big_decimal *value);
 
 int s21_data_eq(const unsigned *data1, const unsigned *data2, int size);
-int s21_data_gt(const unsigned *data1, int sign1, const unsigned *data2,
-                int sign2, int size);
+int s21_data_gt(const unsigned *data1, const unsigned *data2, int size);
 int s21_is_null(s21_decimal value);
 int s21_inc(s21_decimal *result);
 int s21_sum(const unsigned *val1, int sign1, const unsigned *val2, int sign2,
             unsigned *result, int *sign_result, int size);
-// int s21_div2(const unsigned *val1, const unsigned *val2, unsigned *result,
-//  int size);
+
 int s21_decimal_serialize(s21_decimal value, int fd);
 int s21_decimal_deserialize(s21_decimal *value, int fd);
 int s21_div10(s21_decimal value, s21_decimal *result);
@@ -136,12 +136,19 @@ int change_int_sign(int x);
 int get_int_sign(int num);
 void init_decimal(s21_decimal *src);
 
-int s21_divide_by_integer(s21_decimal value, int integer, s21_decimal *result);
-int s21_modulo_by_integer(s21_decimal value, int integer);
-int s21_add_integer(s21_decimal value, int integer, s21_decimal *result);
+int s21_divide_by_integer(s21_decimal value, int integer,
+                          s21_decimal *result); // s21_decimal_other.o
+int s21_modulo_by_integer(s21_decimal value,
+                          int integer); // s21_decimal_other.o
+int s21_add_integer(s21_decimal value, int integer,
+                    s21_decimal *result); // s21_decimal_other.o
 
 int s21_divide_by_power_of_10(s21_decimal value, int power,
-                              s21_decimal *result);
-int s21_get_exponent(s21_decimal value);
+                              s21_decimal *result); // s21_decimal_other.o
+int s21_get_exponent(s21_decimal value);            // s21_decimal_other.o
+
+int s21_multiply_by_integer(
+    s21_decimal value, int integer,
+    s21_decimal *result); // s21_decimal_from_float(...).o
 
 #endif

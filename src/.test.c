@@ -166,7 +166,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
 #ifndef DECIMALIZATOR
   ck_assert(s21_is_equal(a, b) == res);
 #else
-  int res = s21_is_equal(a, b) == res;
+  int res = s21_is_equal(a, b);
   write(output, &res, sizeof(res));
 #endif
 }
@@ -218,7 +218,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
 #ifndef DECIMALIZATOR
   ck_assert(s21_is_greater(a, b) == res);
 #else
-  int res = s21_is_greater(a, b) == res;
+  int res = s21_is_greater(a, b);
   write(output, &res, sizeof(res));
 #endif
 }
@@ -314,7 +314,7 @@ START_TEST(s21_from_decimal_to_int_test)
 int output = open("s21_from_decimal_to_int.output",
                   O_WRONLY | O_CREAT | O_TRUNC, S_IRWXG | S_IRWXU | S_IRWXO);
 #endif
-int fd = open("s21_from_int_to_decimal.input", O_RDONLY);
+int fd = open("s21_from_decimal_to_int.input", O_RDONLY);
 s21_decimal a;
 int res, res2;
 int status = 0;
@@ -348,6 +348,60 @@ int res;
 
 while ((read(fd, &res, sizeof(int)) > 0) && s21_decimal_deserialize(&a, fd)) {
   s21_from_int_to_decimal(res, &b);
+#ifndef DECIMALIZATOR
+
+  ck_assert(s21_data_equal(a, b));
+#else
+  write(output, &b, sizeof(b));
+#endif
+}
+
+close(fd);
+
+}
+END_TEST
+
+START_TEST(s21_from_decimal_to_float_test)
+{
+#line 48
+#ifdef DECIMALIZATOR
+int output = open("s21_from_decimal_to_float.output",
+                  O_WRONLY | O_CREAT | O_TRUNC, S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+int fd = open("s21_from_decimal_to_float.input", O_RDONLY);
+s21_decimal a;
+float res, res2;
+int status = 0;
+while (s21_decimal_deserialize(&a, fd) && (read(fd, &res, sizeof(res)) > 0)) {
+  status = s21_from_decimal_to_float(a, &res2);
+#ifndef DECIMALIZATOR
+
+  ck_assert(res2 == res);
+#else
+  write(output, &status, sizeof(status));
+  write(output, &res2, sizeof(res2));
+#endif
+}
+
+close(fd);
+
+}
+END_TEST
+
+START_TEST(s21_from_float_to_decimal_test)
+{
+#line 70
+#ifdef DECIMALIZATOR
+int output = open("s21_from_float_to_decimal.output",
+                  O_WRONLY | O_CREAT | O_TRUNC, S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+int fd = open("s21_from_float_to_decimal.input", O_RDONLY);
+s21_decimal a;
+s21_decimal b;
+float res;
+
+while ((read(fd, &res, sizeof(res)) > 0) && s21_decimal_deserialize(&a, fd)) {
+  s21_from_float_to_decimal(res, &b);
 #ifndef DECIMALIZATOR
 
   ck_assert(s21_data_equal(a, b));
@@ -480,6 +534,8 @@ int main(void)
     tcase_add_test(tc1_1, s21_is_less_or_equal_test);
     tcase_add_test(tc1_1, s21_from_decimal_to_int_test);
     tcase_add_test(tc1_1, s21_from_int_to_decimal_test);
+    tcase_add_test(tc1_1, s21_from_decimal_to_float_test);
+    tcase_add_test(tc1_1, s21_from_float_to_decimal_test);
     tcase_add_test(tc1_1, s21_truncate_test);
     tcase_add_test(tc1_1, s21_negate_test);
     tcase_add_test(tc1_1, s21_floor_test);

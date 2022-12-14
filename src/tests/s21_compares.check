@@ -16,7 +16,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
 #ifndef DECIMALIZATOR
   ck_assert(s21_is_equal(a, b) == res);
 #else
-  int res = s21_is_equal(a, b) == res;
+  int res = s21_is_equal(a, b);
   write(output, &res, sizeof(res));
 #endif
 }
@@ -58,7 +58,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
 #ifndef DECIMALIZATOR
   ck_assert(s21_is_greater(a, b) == res);
 #else
-  int res = s21_is_greater(a, b) == res;
+  int res = s21_is_greater(a, b);
   write(output, &res, sizeof(res));
 #endif
 }

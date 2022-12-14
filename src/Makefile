@@ -48,7 +48,7 @@ test: clean $(TESTS_SOURSES) s21_decimal.a
 	$(CC) .test.c -lcheck -lm s21_decimal.a -o test 
 	./test
 
-decimalizator: $(TESTS_SOURSES) s21_decimal.a
+decimalizator: clean $(TESTS_SOURSES) s21_decimal.a
 	csc /out:tests/gen.exe tests/generator.cs
 	mono tests/gen.exe
 	checkmk $(TESTS_SOURSES) > .test.c
