@@ -34,9 +34,11 @@ extern const s21_decimal s21_zero;
 // Основные функции
 
 // Перевод в decimal и обратно
-int s21_from_int_to_decimal(int src, s21_decimal *dst);
+int s21_from_int_to_decimal(int src,
+                            s21_decimal *dst); // s21_decimal_conversion.o
 int s21_from_float_to_decimal(float src, s21_decimal *dst);
-int s21_from_decimal_to_int(s21_decimal src, int *dst);
+int s21_from_decimal_to_int(s21_decimal src,
+                            int *dst); // s21_decimal_conversion.o
 int s21_from_decimal_to_float(s21_decimal src, float *dst);
 
 // Арифметические операторы
@@ -57,10 +59,10 @@ int s21_is_equal(s21_decimal, s21_decimal);
 int s21_is_not_equal(s21_decimal, s21_decimal);
 
 // Дополнительные функции
-int s21_floor(s21_decimal value, s21_decimal *result);
-int s21_round(s21_decimal value, s21_decimal *result);
-int s21_truncate(s21_decimal value, s21_decimal *result);
-int s21_negate(s21_decimal value, s21_decimal *result);
+int s21_floor(s21_decimal value, s21_decimal *result);    // s21_decimal_other.o
+int s21_round(s21_decimal value, s21_decimal *result);    // s21_decimal_other.o
+int s21_truncate(s21_decimal value, s21_decimal *result); // s21_decimal_other.o
+int s21_negate(s21_decimal value, s21_decimal *result);   // s21_decimal_other.o
 
 /* Дополнительные функции - тут наши функции,
 которые могут понадобиться в процессе работы */

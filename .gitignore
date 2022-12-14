@@ -4,5 +4,6 @@
 
 **/*.a
 **/s21_decimal
-**/*.exe
-**/
+**.exe
+**/*.o
+!objects/*.o
