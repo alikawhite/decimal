@@ -13,7 +13,7 @@ all: s21_decimal.a
 rebuild: clean all
 
 s21_decimal.a: $(OBJECTS) s21_decimal.h
-	@ar rc $@ $(OBJECTS) 
+	@ar rc $@ $(OBJECTS) $(wildcard objects/*.o)
 	@ranlib $@
 
 lib_cov.a: $(SOURCES) s21_decimal.h
