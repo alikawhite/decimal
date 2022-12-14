@@ -78,6 +78,7 @@ int big_getScale(s21_big_decimal src) {
   return res;
 }
 
+
 void to_one_scale(s21_decimal *value1, s21_decimal *value2,
                   s21_big_decimal *first, s21_big_decimal *second) {
   s21_big_decimal result = {0};
@@ -97,6 +98,7 @@ void to_one_scale(s21_decimal *value1, s21_decimal *value2,
     *first = tmp1;
     *second = tmp2;
   }
+
 }
 
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
@@ -595,6 +597,7 @@ int s21_data_gt(const unsigned *data1, int sign1, const unsigned *data2,
   return result;
 }
 
+
 void big_div10(s21_big_decimal value, s21_big_decimal *result) {
   unsigned long long buf = 0ull;
   unsigned mod = 0;
@@ -608,6 +611,7 @@ void big_div10(s21_big_decimal value, s21_big_decimal *result) {
     buf = mod;
   }
 }
+
 
 int s21_div10(s21_decimal value, s21_decimal *result) {
   int integer = 10;
@@ -719,8 +723,10 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
   return status;
 }
+
 int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int status = S21_OK;
 
   return status;
 }
+

@@ -10,6 +10,7 @@
 #include <string.h>
 #include <unistd.h>
 
+
 #define S21_OK 0
 
 #define is_nan(x) __builtin_isnan(x)
@@ -17,6 +18,7 @@
 #define MINLIMIT_ERROR                                                         \
   2 // число слишком мало или равно отрицательной бесконечности
 #define DIVBYZERO_ERROR 3 // деление на 0
+
 #define LIM 1e-28
 #define CONVERTING_ERROR 1
 #define FRACTIONAL 8
@@ -129,6 +131,7 @@ int s21_get_scale(s21_decimal value);
 void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size);
 
 int s21_div10mem(unsigned *result, int size);
+
 
 int change_int_sign(int x);
 int get_int_sign(int num);
