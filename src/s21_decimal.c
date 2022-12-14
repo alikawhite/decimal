@@ -156,7 +156,7 @@ void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* fir
     } else {
       *first = tmp1;
       *second = tmp2;
-    }
+    }getSign
 }
 
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result) {
@@ -762,21 +762,7 @@ int s21_data_gt(const unsigned *data1, int sign1, const unsigned *data2,
   return result;
 }
 
-int s21_div10(s21_decimal value, s21_decimal *result) {
-  unsigned long long buf = 0ull;
-  unsigned mod = 0;
-  for (int i = 0; i < 4; i++) {
-    result->bits[i] = value.bits[i];
-  }
-  for (int i = 2; i >= 0; i--) {
-    buf <<= 32;
-    mod = (buf + result->bits[i]) % 10;
-    result->bits[i] = (unsigned)((buf + result->bits[i]) / 10);
-    buf = mod;
-  }
 
-  return 0;
-}
 
 void big_div10(s21_big_decimal value, s21_big_decimal *result) {
   unsigned long long buf = 0ull;
@@ -894,3 +880,5 @@ int s21_decimal_deserialize(s21_decimal *value, int fd) {
 
   return (read(fd, value, sizeof(s21_decimal)) != EOF);
 }
+
+

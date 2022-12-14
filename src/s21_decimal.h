@@ -10,16 +10,16 @@
 #include <string.h>
 #include <unistd.h>
 
-#define is_nan(x) __builtin_isnan(x)
 #define MAXLIMIT_ERROR 1  // число слишком велико или равно бесконечности
-#define MINLIMIT_ERROR 2  // число слишком мало или равно отрицательной бесконечности
+#define MINLIMIT_ERROR \
+  2  // число слишком мало или равно отрицательной бесконечности
 #define DIVBYZERO_ERROR 3  // деление на 0
 #define LIM 1e-28
 #define CONVERTING_ERROR 1
 #define FRACTIONAL 8
 
-typedef struct{
-    int bits[4];
+typedef struct {
+  unsigned int bits[4];
 } s21_decimal;
 
 typedef struct {
@@ -29,7 +29,6 @@ typedef struct {
 extern const s21_decimal s21_zero;
 
 // Основные функции
-
 
 // Перевод в decimal и обратно
 int s21_from_int_to_decimal(int src, s21_decimal *dst);
@@ -68,40 +67,42 @@ int getSign(s21_decimal dst);
 void setSign(s21_decimal *dst);
 int getBit(s21_decimal d, int i);
 int setBit(s21_decimal *dst, int i);
-void setScale(s21_decimal* dst, int scale);
+void setScale(s21_decimal *dst, int scale);
 int getScale(s21_decimal src);
 int getExp(float src);
-int cleanBit(s21_decimal* dst, int i);
-void cleanSign(s21_decimal* value);
-int shift(s21_decimal* d, int opt);
+int cleanBit(s21_decimal *dst, int i);
+void cleanSign(s21_decimal *value);
+int shift(s21_decimal *d, int opt);
 
 int comparison(s21_big_decimal value_1, s21_big_decimal value_2);
-int big_to_dec(s21_big_decimal big_d, s21_decimal* d);
+int big_to_dec(s21_big_decimal big_d, s21_decimal *d);
 
 s21_decimal divTen(s21_decimal src);
-s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider, s21_big_decimal *reminder);
+s21_big_decimal div_big_end(s21_big_decimal value, s21_big_decimal divider,
+                            s21_big_decimal *reminder);
 
 void big_decimal(s21_decimal value, s21_big_decimal *result);
 int big_getScale(s21_big_decimal src);
-int big_setBit(s21_big_decimal* dst, int i);
+int big_setBit(s21_big_decimal *dst, int i);
 int big_getBit(s21_big_decimal dst, int i);
 int big_getSign(s21_big_decimal dst);
-void big_cleanBit(s21_big_decimal* dst, int i);
-void big_cleanScale(s21_big_decimal* dst);
-void big_cleanSign(s21_big_decimal* value);
+void big_cleanBit(s21_big_decimal *dst, int i);
+void big_cleanScale(s21_big_decimal *dst);
+void big_cleanSign(s21_big_decimal *value);
 void big_setSign(s21_big_decimal *dst);
-void big_setScale(s21_big_decimal* dst, int scale);
+void big_setScale(s21_big_decimal *dst, int scale);
 int big_not_null(s21_big_decimal dst);
-void big_inverce(s21_big_decimal b, s21_big_decimal* d);
+void big_inverce(s21_big_decimal b, s21_big_decimal *d);
 
-
-void to_zero(s21_big_decimal* dst);
+void to_zero(s21_big_decimal *dst);
 void big_shift(s21_big_decimal *dst, int opt);
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
-void big_sub(s21_big_decimal first, s21_big_decimal second, s21_big_decimal* result);
-void to_one_scale(s21_decimal *value1, s21_decimal *value2, s21_big_decimal* first, s21_big_decimal *second);
+void big_sub(s21_big_decimal first, s21_big_decimal second,
+             s21_big_decimal *result);
+void to_one_scale(s21_decimal *value1, s21_decimal *value2,
+                  s21_big_decimal *first, s21_big_decimal *second);
 void scale_up(s21_big_decimal *dst, int value, s21_big_decimal *result);
-void scale_down(s21_big_decimal* dst, int value, s21_big_decimal* result);
+void scale_down(s21_big_decimal *dst, int value, s21_big_decimal *result);
 void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 void big_div10(s21_big_decimal value, s21_big_decimal *result);
@@ -114,7 +115,7 @@ int s21_inc(s21_decimal *result);
 int s21_sum(const unsigned *val1, int sign1, const unsigned *val2, int sign2,
             unsigned *result, int *sign_result, int size);
 // int s21_div2(const unsigned *val1, const unsigned *val2, unsigned *result,
-            //  int size);
+//  int size);
 int s21_decimal_serialize(s21_decimal value, int fd);
 int s21_decimal_deserialize(s21_decimal *value, int fd);
 int s21_div10(s21_decimal value, s21_decimal *result);
@@ -123,5 +124,6 @@ int s21_mod10(s21_decimal value);
 int s21_get_scale(s21_decimal value);
 void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size);
 
-#endif
+int s21_div10mem(unsigned *result, int size);
 
+#endif
