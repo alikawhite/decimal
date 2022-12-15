@@ -49,12 +49,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       sign = s21_get_sign(value_2);
     }
   }
-  unsigned long long buf = 0ull;
-  for (int i = 0; i < 6; i++) {
-    buf += (unsigned long long)buf_1[i] + (unsigned long long)buf_2[i];
-    buf_result[i] = (unsigned)buf;
-    buf >>= 32;
-  }
+  s21_data_add(buf_1, buf_2, buf_result, 6);
   while (scale && (buf_result[5] || buf_result[4] || buf_result[3])) {
     s21_div10mem(result, result, 6);
     scale--;
@@ -82,6 +77,15 @@ void s21_negate_data(unsigned *value, int size) {
   for (int i = 0; i < size; i++) {
     buf += value[i];
     value[i] = (unsigned)buf;
+    buf >>= 32;
+  }
+}
+void s21_data_add(unsigned *buf_1, unsigned *buf_2, unsigned *buf_result,
+                  int size) {
+  unsigned long long buf = 0ull;
+  for (int i = 0; i < size; i++) {
+    buf += (unsigned long long)buf_1[i] + (unsigned long long)buf_2[i];
+    buf_result[i] = (unsigned)buf;
     buf >>= 32;
   }
 }
@@ -128,7 +132,7 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     result->bits[3] = sign << 31;
     s21_set_scale(result, scale);
   } else {
-    err = 1;
+    err = 1 + sign;
   }
   return err;
 }
@@ -166,6 +170,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   } else {
     sign = 1;
   }
+  int pow_2 = 0;
   unsigned buf_1[6] = {0, 0, 0, 0, 0, 0};
   unsigned buf_2[6] = {0, 0, 0, 0, 0, 0};
   unsigned buf_result[6] = {0, 0, 0, 0, 0, 0};
@@ -175,11 +180,53 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   s21_to_scale(value_1, scale, buf_1, 6);
   s21_to_scale(value_2, scale, buf_2, 6);
   scale = s21_get_scale(value_2) - s21_get_scale(value_1);
-  while (s21_is_greater(value_1, value_2)) {
-    
+  while (s21_data_gt(buf_1, buf_2, 6)) {
+    s21_mul10mem(&buf_2, 6);
+    scale++;
   }
-
+  while (s21_data_gt(buf_2, buf_1, 6)) {
+    s21_div2mem(&buf_1, 6);
+    pow_2++;
+  }
+  unsigned buf_2_inv[6] = {0, 0, 0, 0, 0, 0};
+  s21_negate_data(buf_2_inv, 6);
+  while (buf_1[0] || buf_1[1] || buf_1[2] || buf_1[3] || buf_1[4] || buf_1[5]) {
+    s21_mul2mem(buf_result, 6);
+    if (s21_data_gt(buf_1, buf_2, 6) || s21_data_eq(buf_1, buf_2, 6)) {
+      s21_data_add(buf_1, buf_2_inv, buf_1, 6);
+    }
+  }
+  while (pow_2--) {
+    s21_div2mem(&buf_result, 6);
+  }
+  while (scale++ < 0) {
+    s21_mul10mem(buf_result, 6);
+  }
+  while (scale && (buf_result[5] || buf_result[4] || buf_result[3])) {
+    s21_div10mem(result, result, 6);
+    scale--;
+  }
+  if ((!(buf_result[5] || buf_result[4] || buf_result[3]) && (scale <= 28))) {
+    for (int i = 0; i < 3; i++) {
+      result->bits[i] = buf_result[i];
+    }
+    result->bits[3] = sign << 31;
+    s21_set_scale(result, scale);
+  } else {
+    err = 1 + sign;
+  }
   return err;
+}
+
+int s21_mul2mem(unsigned *value, int size) {
+  int status = 0;
+  unsigned long long buf = 0ull;
+  for (int i = 0; i < size; i++) {
+    buf >>= 32;
+    buf = buf + (unsigned long long)value[i] * 2;
+    value[i] = (unsigned)buf;
+  }
+  return status;
 }
 
 int s21_mul10mem(unsigned *value, int size) {
@@ -187,10 +234,23 @@ int s21_mul10mem(unsigned *value, int size) {
   unsigned long long buf = 0ull;
   for (int i = 0; i < size; i++) {
     buf >>= 32;
-    buf = buf + value[i] * 10;
+    buf = buf + (unsigned long long)value[i] * 10;
     value[i] = (unsigned)buf;
   }
   return status;
+}
+
+void s21_div2mem(unsigned *value, int size) {
+  unsigned long long buf = 0ull;
+  unsigned long long div_buf = 0ull;
+  unsigned mod = 0;
+  for (int i = size - 1; i >= 0; i--) {
+    mod = (buf + value[i]) % 2;
+    div_buf = ((buf + value[i]) / 2);
+    value[i] = (unsigned)div_buf;
+    buf = mod;
+    buf = buf << 32;
+  }
 }
 
 int s21_mul10(s21_decimal *value) {
@@ -228,70 +288,3 @@ int s21_mul2(s21_decimal *value) {
   }
   return status;
 }
-
-// int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-//   int err = 0;
-//   unsigned int buf[6] = {0};
-//   unsigned int buf2[6] = {0};
-//   unsigned long long tmp = 0ull;
-//   int scale = s21_get_scale(value_1) + s21_get_scale(value_2);
-//   for (int i = 0; i < 3; i++) {
-//     for (int j = 0; j < 3; j++) {
-//       tmp = value_1.bits[i] * value_2.bits[j];
-//       buf2[i + j] = tmp;
-//       buf2[i + j + 1] = tmp >> 32;
-//       s21_sum(buf, buf2, buf, 6);
-//       buf2[i + j] = 0;
-//       buf2[i + j + 1] = 0;
-//     }
-//   }
-//   while ((scale > 28 || (buf[3] || buf[4] || buf[5])) && scale >= 0) {
-//     s21_div10mem(buf, buf, 6);
-//     scale--;
-//   }
-//   if (buf[3] || buf[4] || buf[5]) {
-//     err = 1;
-//   } else {
-//     for (int i = 0; i < 4; i++) {
-//       result->bits[i] = buf[i];
-//     }
-//     if (s21_get_sign(value_1) == s21_get_sign(value_2))
-//       s21_clean_sign(result);
-//     else
-//       s21_rise_sign(result);
-//     s21_set_scale(result, scale);
-//   }
-//   return err;
-// }
-
-// int err = 0;
-// s21_decimal res = {0};
-// int scale1 = s21_get_scale(value_1);
-// int scale2 = s21_get_scale(value_2);
-// int scale = scale2 - scale1;
-// int sign1 = s21_get_sign(value_1);
-// int sign2 = s21_get_sign(value_2);
-// value_1.bits[3] = 0;
-// value_2.bits[3] = 0;
-// while (s21_is_greater(value_1, value_2) && !s21_mul10(&value_2)) scale++;
-// while (value_1.bits[0] || value_1.bits[1] || value_1.bits[2]) {
-//   err = err || s21_mul2(&res);
-//   if (s21_is_greater_or_equal(value_1, value_2)) {
-//     s21_sub(value_1, value_2, &value_1);
-//     res.bits[0]++;
-//   }
-//   s21_mul2(&value_1);
-// }
-// while (scale > 28) {
-//   s21_div10(res, &res);
-//   scale--;
-// }
-// while (scale < 0) {
-//   err = err || s21_mul10(&res);
-//   scale++;
-// }
-// if (sign1 == sign2)
-//   s21_clean_sign(result);
-// else
-//   s21_rise_sign(result);
-// return err;

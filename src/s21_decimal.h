@@ -124,4 +124,6 @@ int s21_mod10(s21_decimal value);
 int s21_get_scale(s21_decimal value);
 void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size);
 void s21_negate_data(unsigned *value, int size);
+void s21_div2mem(unsigned *value, int size);
+int s21_mul2mem(unsigned *value, int size);
 #endif
