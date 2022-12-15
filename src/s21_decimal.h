@@ -15,6 +15,7 @@
 #define MINLIMIT_ERROR                                                         \
   2 // число слишком мало или равно отрицательной бесконечности
 #define DIVBYZERO_ERROR 3 // деление на 0
+
 #define LIM 1e-28
 #define CONVERTING_ERROR 1
 #define FRACTIONAL 8
@@ -122,6 +123,7 @@ int s21_div10(s21_decimal value, s21_decimal *result);
 int s21_mod10(s21_decimal value);
 int s21_get_scale(s21_decimal value);
 void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size);
+
 void s21_negate_data(unsigned *value, int size);
 void s21_div2mem(unsigned *value, int size);
 int s21_mul2mem(unsigned *value, int size);
@@ -130,5 +132,6 @@ void s21_data_add(unsigned *buf_1, unsigned *buf_2, unsigned *buf_result,
                   int size);
 void s21_set_scale(s21_decimal *dst, int scale);
 int s21_mul10mem(unsigned *value, int size);
+
 
 #endif

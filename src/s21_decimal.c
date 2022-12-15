@@ -53,6 +53,7 @@ int getScale(s21_decimal src) {
   return res;
 }
 
+
 int shift(s21_decimal *dst, int opt) {
   if (opt == 1) {
     for (int i = 96; i != 0; i--) {
@@ -96,7 +97,9 @@ void cleanSign(s21_decimal *value) {
 }
 
 // Вспомогательное
+
 int s21_div10(s21_decimal value, s21_decimal *result) {
+
   unsigned long long buf = 0ull;
   unsigned mod = 0;
   for (int i = 0; i < 4; i++) {
@@ -108,6 +111,7 @@ int s21_div10(s21_decimal value, s21_decimal *result) {
     result->bits[i] = (unsigned)((buf + result->bits[i]) / 10);
     buf = mod;
   }
+
 
   return 0;
 }
@@ -146,3 +150,4 @@ int s21_sum(const unsigned *val1, int sign1, const unsigned *val2, int sign2,
   }
   return status;
 }
+
