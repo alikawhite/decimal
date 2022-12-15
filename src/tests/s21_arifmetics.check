@@ -1,0 +1,115 @@
+#include <check.h>
+
+#include "s21_decimal.h"
+
+#test s21_add_test
+
+int fd = open("s21_add.input", O_RDONLY);
+
+#ifdef DECIMALIZATOR
+int output = open("s21_add.output", O_WRONLY | O_CREAT | O_TRUNC,
+                  S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+
+s21_decimal a, b, et, res;
+
+while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
+       s21_decimal_deserialize(&et, fd)) {
+  s21_add(a, b, &res);
+#ifndef DECIMALIZATOR
+  ck_assert((s21_is_equal(et, res)));
+#else
+  s21_decimal_serialize(res, output);
+#endif
+}
+
+close(fd);
+
+#test s21_sub_test
+
+#ifdef DECIMALIZATOR
+int output = open("s21_sub.output", O_WRONLY | O_CREAT | O_TRUNC,
+                  S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+
+int fd = open("s21_sub.input", O_RDONLY);
+s21_decimal a, b, et, res;
+
+while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
+       s21_decimal_deserialize(&et, fd)) {
+  s21_sub(a, b, &res);
+#ifndef DECIMALIZATOR
+  ck_assert((s21_is_equal(et, res)));
+#else
+  s21_decimal_serialize(res, output);
+#endif
+}
+
+close(fd);
+
+#test s21_mul_test
+
+int fd = open("s21_mul.input", O_RDONLY);
+
+#ifdef DECIMALIZATOR
+int output = open("s21_mul.output", O_WRONLY | O_CREAT | O_TRUNC,
+                  S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+
+s21_decimal a, b, et, res;
+
+while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
+       s21_decimal_deserialize(&et, fd)) {
+  s21_mul(a, b, &res);
+#ifndef DECIMALIZATOR
+  ck_assert((s21_is_equal(et, res)));
+#else
+  s21_decimal_serialize(res, output);
+#endif
+}
+
+close(fd);
+#test s21_div_test
+
+int fd = open("s21_div.input", O_RDONLY);
+
+#ifdef DECIMALIZATOR
+int output = open("s21_div.output", O_WRONLY | O_CREAT | O_TRUNC,
+                  S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+
+s21_decimal a, b, et, res;
+
+while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
+       s21_decimal_deserialize(&et, fd)) {
+  s21_div(a, b, &res);
+#ifndef DECIMALIZATOR
+  ck_assert((s21_is_equal(et, res)));
+#else
+  s21_decimal_serialize(res, output);
+#endif
+}
+
+close(fd);
+#test s21_mod_test
+
+int fd = open("s21_mod.input", O_RDONLY);
+
+#ifdef DECIMALIZATOR
+int output = open("s21_mod.output", O_WRONLY | O_CREAT | O_TRUNC,
+                  S_IRWXG | S_IRWXU | S_IRWXO);
+#endif
+
+s21_decimal a, b, et, res;
+
+while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
+       s21_decimal_deserialize(&et, fd)) {
+  s21_mod(a, b, &res);
+#ifndef DECIMALIZATOR
+  ck_assert((s21_is_equal(et, res)));
+#else
+  s21_decimal_serialize(res, output);
+#endif
+}
+
+close(fd);

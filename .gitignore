@@ -1,0 +1,9 @@
+**.input
+**.output
+
+
+**/*.a
+**/s21_decimal
+**.exe
+**/*.o
+!objects/*.o
