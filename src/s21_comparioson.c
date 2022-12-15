@@ -102,7 +102,7 @@ int s21_multiply_by_integer_mem(unsigned *value, int size_v, int integer,
   int status = 0;
   unsigned long long buf = 0ull;
   for (int i = 0; i < size_r; i++) {
-    buf += (0ull + result[i]) * integer;
+    buf += (unsigned long long)(buf_array[i]) * (unsigned long long)integer;
     buf_array[i] = (unsigned)buf;
     buf = (buf >> 32);
   }

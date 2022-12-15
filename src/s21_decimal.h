@@ -57,6 +57,7 @@ int s21_is_equal(s21_decimal, s21_decimal);
 int s21_is_not_equal(s21_decimal, s21_decimal);
 
 // Дополнительные функции
+
 int s21_floor(s21_decimal value, s21_decimal *result);
 int s21_round(s21_decimal value, s21_decimal *result);
 int s21_truncate(s21_decimal value, s21_decimal *result);
@@ -130,5 +131,6 @@ void s21_data_add(unsigned *buf_1, unsigned *buf_2, unsigned *buf_result,
                   int size);
 void s21_set_scale(s21_decimal *dst, int scale);
 int s21_mul10mem(unsigned *value, int size);
+int s21_mod10mem(unsigned *value, int size);
 
 #endif

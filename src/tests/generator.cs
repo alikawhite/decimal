@@ -85,6 +85,16 @@ class Program
       writer.Write(1m);
       writer.Write(1m);
       writer.Write(1m);
+      for (decimal i = -100m; i < 100m; i += 100m / 20m)
+      {
+        for (decimal j = -100m; j < 100m; j += 100m / 20m)
+        {
+          writer.Write(i);
+          writer.Write(j);
+          writer.Write(i * j);
+        }
+      }
+
     }
 
   }
