@@ -17,12 +17,6 @@ int s21_mod10(s21_decimal value) {
 }
 int s21_get_sign(s21_decimal dst) { return dst.bits[3] & 0x80000000 ? 1 : 0; }
 
-void s21_to_zero(s21_big_decimal *dst) {
-  for (int i = 0; i < 7; i++) {
-    dst->bits[i] = 0;
-  }
-}
-
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int err = 0;
   int sign = 0;
@@ -148,12 +142,6 @@ void s21_div10mem(unsigned *value, unsigned *result, int size) {
     buf = mod;
     buf = buf << 32;
   }
-}
-
-void s21_rise_sign(s21_decimal *dst) { dst->bits[3] |= 0x80000000; }
-
-void s21_clean_sign(s21_decimal *value) {
-  value->bits[3] &= 0b01111111111111111111111111111111;
 }
 
 void s21_set_scale(s21_decimal *dst, int scale) {
