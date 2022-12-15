@@ -41,9 +41,6 @@ class Program
           writer.Write(i + j);
         }
       }
-      writer.Write(1m);
-      writer.Write(-1.5m);
-      writer.Write(-0.5m);
       // for (decimal i = -314159.26535897932384626433833m; i < 314159.26535897932384626433833m; i += 314159.26535897932384626433833m / 20m)
       // {
       //     for (decimal j = -314.15926535897932384626433833m; j < 314.15926535897932384626433833m; j += 314.15926535897932384626433833m / 20m)
@@ -85,7 +82,11 @@ class Program
           writer.Write(i * j);
         }
       }
+      writer.Write(1m);
+      writer.Write(1m);
+      writer.Write(1m);
     }
+
   }
   public static void s21_div()
   {

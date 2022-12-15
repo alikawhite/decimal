@@ -12,22 +12,26 @@ class Decimalizator
 
     // s21_add();
     // s21_sub();
-    // s21_mul();
-    // s21_div();
+    //?// s21_mul();
+    s21_div();
     // s21_mod();
 
-    s21_is_equal();
-    s21_is_greater();
+    // s21_is_equal();
+    // s21_is_not_equal();
+    // s21_is_greater();
+    // s21_is_greater_or_equal();
+    // s21_is_less();
+    // s21_is_less_or_equal();
 
-    s21_from_int_to_decimal();
+    // s21_from_int_to_decimal();
     // s21_from_decimal_to_int();
-    // //s21_from_decimal_to_float();
-    // //s21_from_float_to_decimal();
+    // ?//s21_from_decimal_to_float();
+    // ?//s21_from_float_to_decimal();
 
-    s21_negate();
-    s21_truncate();
-    s21_floor();
-    s21_round();
+    // s21_negate();
+    // s21_truncate();
+    // s21_floor();
+    // s21_round();
   }
 
 
@@ -76,6 +80,8 @@ class Decimalizator
   {
     String testname = "s21_sub";
     Console.WriteLine("TEST: {0}", testname);
+    int ok = 0;
+    int all = 0;
 
     BinaryReader reader_input = new BinaryReader(File.Open(testname + ".input", FileMode.Open));
     BinaryReader reader_output = new BinaryReader(File.Open(testname + ".output", FileMode.Open));
@@ -88,32 +94,39 @@ class Decimalizator
       reader_input.ReadDecimal();
 
       decimal result = reader_output.ReadDecimal();
-
+      all++;
       if (result == op1 - op2)
       {
+        ok++;
         if (!silence)
         {
-          Console.WriteLine("OK: in {0}: {1} - {2} = {3}", testname, op1, op2, result);
+          Console.WriteLine("OK: in {0}: {1} - ({2}) = {3}", testname, op1, op2, result);
         }
 
       }
       else
       {
 
-        Console.WriteLine("ERROR: in {0}: {1} - {2} = {3} (!= {4})", testname, op1, op2, result, op1 - op2);
+        Console.WriteLine("ERROR: in {0}: {1} - ({2}) = {3} (!= {4} (~({5})))", testname, op1, op2, result, op1 - op2, result - (op1 - op2));
       }
+
+
     }
+    Console.WriteLine("TOTAL: {0} OK: {1}: ERROR: {2}", all, ok, all - ok);
     reader_output.Close(); reader_input.Close();
 
   }
   public static void s21_mul()
   {
+    int ok = 0;
+    int all = 0;
     String testname = "s21_mul";
     Console.WriteLine("TEST: {0}", testname);
 
     BinaryReader reader_input = new BinaryReader(File.Open(testname + ".input", FileMode.Open));
     BinaryReader reader_output = new BinaryReader(File.Open(testname + ".output", FileMode.Open));
 
+
     while (reader_output.BaseStream.Position != reader_output.BaseStream.Length)
     {
       decimal op1 = reader_input.ReadDecimal();
@@ -121,28 +134,35 @@ class Decimalizator
       reader_input.ReadDecimal();
 
       decimal result = reader_output.ReadDecimal();
-
+      all++;
       if (result == op1 * op2)
       {
+        ok++;
         if (!silence)
         {
-          Console.WriteLine("OK: in {0}: {1} * {2} = {3}", testname, op1, op2, result);
+          Console.WriteLine("OK: in {0}: {1} * ({2}) = {3}", testname, op1, op2, result);
         }
 
       }
       else
       {
 
-        Console.WriteLine("ERROR: in {0}: {1} * {2} = {3} (!= {4})", testname, op1, op2, result, op1 * op2);
+        Console.WriteLine("ERROR: in {0}: {1} * ({2}) = {3} (!= {4} (~({5})))", testname, op1, op2, result, op1 + op2, result - (op1 * op2));
       }
+
+
     }
+    Console.WriteLine("TOTAL: {0} OK: {1}: ERROR: {2}", all, ok, all - ok);
     reader_output.Close(); reader_input.Close();
+
 
   }
   public static void s21_div()
   {
     String testname = "s21_div";
     Console.WriteLine("TEST: {0}", testname);
+    int ok = 0;
+    int all = 0;
 
     BinaryReader reader_input = new BinaryReader(File.Open(testname + ".input", FileMode.Open));
     BinaryReader reader_output = new BinaryReader(File.Open(testname + ".output", FileMode.Open));
@@ -155,23 +175,27 @@ class Decimalizator
       reader_input.ReadDecimal();
 
       decimal result = reader_output.ReadDecimal();
-
+      all++;
       if (result == op1 / op2)
       {
+        ok++;
         if (!silence)
         {
-          Console.WriteLine("OK: in {0}: {1} / {2} = {3}", testname, op1, op2, result);
+          Console.WriteLine("OK: in {0}: {1} / ({2}) = {3}", testname, op1, op2, result);
         }
 
       }
       else
       {
 
-        Console.WriteLine("ERROR: in {0}: {1} / {2} = {3} (!= {4})", testname, op1, op2, result, op1 / op2);
+        Console.WriteLine("ERROR: in {0}: {1} / ({2}) = {3} (!= {4} (~({5})))", testname, op1, op2, result, op1 / op2, result - (op1 / op2));
       }
-    }
 
+
+    }
+    Console.WriteLine("TOTAL: {0} OK: {1}: ERROR: {2}", all, ok, all - ok);
     reader_output.Close(); reader_input.Close();
+
 
   }
   public static void s21_mod()
@@ -238,7 +262,7 @@ class Decimalizator
         ok++;
         if (!silence)
         {
-          Console.WriteLine("OK: in {0}: {1} % {2} = {3}", testname, op1, op2, result);
+          Console.WriteLine("OK: in {0}: {1} == {2} = {3}", testname, op1, op2, result);
         }
 
       }
@@ -246,6 +270,48 @@ class Decimalizator
       {
 
         Console.WriteLine("ERROR: in {0}: {1} == {2} = {3} (!= {4})", testname, op1, op2, (result == 1 ? true : false), op1 == op2);
+      }
+    }
+    Console.WriteLine("TOTAL: {0} OK: {1}: ERROR: {2}", all, ok, all - ok);
+    reader_output.Close(); reader_input.Close();
+
+  }
+  public static void s21_is_not_equal()
+  {
+    int ok = 0;
+    int all = 0;
+    String testname = "s21_is_not_equal";
+
+    Console.WriteLine("TEST: {0}", testname);
+
+    BinaryReader reader_input = new BinaryReader(File.Open(testname + ".input", FileMode.Open));
+    BinaryReader reader_output = new BinaryReader(File.Open(testname + ".output", FileMode.Open));
+
+
+    while (reader_output.BaseStream.Position != reader_output.BaseStream.Length)
+    {
+      all++;
+      decimal op1 = reader_input.ReadDecimal();
+      decimal op2 = reader_input.ReadDecimal();
+      Int32 eq = reader_input.ReadInt32();
+
+      Int32 result = reader_output.ReadInt32();
+
+
+
+      if (((op1 != op2) ? 1 : 0) == (result))
+      {
+        ok++;
+        if (!silence)
+        {
+          Console.WriteLine("OK: in {0}: {1} != {2}", testname, op1, op2, result);
+        }
+
+      }
+      else
+      {
+
+        Console.WriteLine("ERROR: in {0}: {1} != {2} = {3} (!= {4})", testname, op1, op2, (result == 1 ? true : false), op1 != op2);
       }
     }
     Console.WriteLine("TOTAL: {0} OK: {1}: ERROR: {2}", all, ok, all - ok);
@@ -279,7 +345,7 @@ class Decimalizator
         ok++;
         if (!silence)
         {
-          Console.WriteLine("OK: in {0}: {1} % {2} = {3}", testname, op1, op2, result);
+          Console.WriteLine("OK: in {0}: {1} > {2} = {3}", testname, op1, op2, result);
         }
 
       }
@@ -293,6 +359,131 @@ class Decimalizator
     reader_output.Close(); reader_input.Close();
 
   }
+  public static void s21_is_greater_or_equal()
+  {
+    int ok = 0;
+    int all = 0;
+    String testname = "s21_is_greater_or_equal";
+    Console.WriteLine("TEST: {0}", testname);
+
+    BinaryReader reader_input = new BinaryReader(File.Open(testname + ".input", FileMode.Open));
+    BinaryReader reader_output = new BinaryReader(File.Open(testname + ".output", FileMode.Open));
+
+
+    while (reader_output.BaseStream.Position != reader_output.BaseStream.Length)
+    {
+      all++;
+      decimal op1 = reader_input.ReadDecimal();
+      decimal op2 = reader_input.ReadDecimal();
+      Int32 eq = reader_input.ReadInt32();
+
+      Int32 result = reader_output.ReadInt32();
+
+
+
+      if (((op1 >= op2) ? 1 : 0) == (result))
+      {
+        ok++;
+        if (!silence)
+        {
+          Console.WriteLine("OK: in {0}: {1} >= {2} = {3}", testname, op1, op2, result);
+        }
+
+      }
+      else
+      {
+
+        Console.WriteLine("ERROR: in {0}: {1} >= {2} = {3} (!= {4})", testname, op1, op2, (result == 1 ? true : false), op1 >= op2);
+      }
+    }
+    Console.WriteLine("TOTAL: {0} OK: {1}: ERROR: {2}", all, ok, all - ok);
+    reader_output.Close(); reader_input.Close();
+
+  }
+  public static void s21_is_less_or_equal()
+  {
+    int ok = 0;
+    int all = 0;
+    String testname = "s21_is_less_or_equal";
+    Console.WriteLine("TEST: {0}", testname);
+
+    BinaryReader reader_input = new BinaryReader(File.Open(testname + ".input", FileMode.Open));
+    BinaryReader reader_output = new BinaryReader(File.Open(testname + ".output", FileMode.Open));
+
+
+    while (reader_output.BaseStream.Position != reader_output.BaseStream.Length)
+    {
+      all++;
+      decimal op1 = reader_input.ReadDecimal();
+      decimal op2 = reader_input.ReadDecimal();
+      Int32 eq = reader_input.ReadInt32();
+
+      Int32 result = reader_output.ReadInt32();
+
+
+
+      if (((op1 <= op2) ? 1 : 0) == (result))
+      {
+        ok++;
+        if (!silence)
+        {
+          Console.WriteLine("OK: in {0}: {1} <= {2} = {3}", testname, op1, op2, result);
+        }
+
+      }
+      else
+      {
+
+        Console.WriteLine("ERROR: in {0}: {1} <= {2} = {3} (!= {4})", testname, op1, op2, (result == 1 ? true : false), op1 <= op2);
+      }
+    }
+    Console.WriteLine("TOTAL: {0} OK: {1}: ERROR: {2}", all, ok, all - ok);
+    reader_output.Close(); reader_input.Close();
+
+  }
+  public static void s21_is_less()
+  {
+    int ok = 0;
+    int all = 0;
+    String testname = "s21_is_less";
+    Console.WriteLine("TEST: {0}", testname);
+
+    BinaryReader reader_input = new BinaryReader(File.Open(testname + ".input", FileMode.Open));
+    BinaryReader reader_output = new BinaryReader(File.Open(testname + ".output", FileMode.Open));
+
+
+    while (reader_output.BaseStream.Position != reader_output.BaseStream.Length)
+    {
+      all++;
+      decimal op1 = reader_input.ReadDecimal();
+      decimal op2 = reader_input.ReadDecimal();
+      Int32 eq = reader_input.ReadInt32();
+
+      Int32 result = reader_output.ReadInt32();
+
+
+
+      if (((op1 < op2) ? 1 : 0) == (result))
+      {
+        ok++;
+        if (!silence)
+        {
+          Console.WriteLine("OK: in {0}: {1} < {2} = {3}", testname, op1, op2, result);
+        }
+
+      }
+      else
+      {
+
+        Console.WriteLine("ERROR: in {0}: {1} < {2} = {3} (!= {4})", testname, op1, op2, (result == 1 ? true : false), op1 < op2);
+      }
+    }
+    Console.WriteLine("TOTAL: {0} OK: {1}: ERROR: {2}", all, ok, all - ok);
+    reader_output.Close(); reader_input.Close();
+
+  }
+
+
   public static void s21_floor()
   {
 

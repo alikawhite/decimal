@@ -10,8 +10,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#define S21_OK 0
-
 #define is_nan(x) __builtin_isnan(x)
 #define MAXLIMIT_ERROR 1 // число слишком велико или равно бесконечности
 #define MINLIMIT_ERROR                                                         \
@@ -20,6 +18,8 @@
 #define LIM 1e-28
 #define CONVERTING_ERROR 1
 #define FRACTIONAL 8
+
+#define S21_OK 0
 
 typedef struct {
   unsigned bits[4];
@@ -34,14 +34,10 @@ extern const s21_decimal s21_zero;
 // Основные функции
 
 // Перевод в decimal и обратно
-int s21_from_int_to_decimal(int src,
-                            s21_decimal *dst); // s21_decimal_conversion.o
-int s21_from_float_to_decimal(
-    float src, s21_decimal *dst); // s21_decimal_from_float(...).o
-int s21_from_decimal_to_int(s21_decimal src,
-                            int *dst); // s21_decimal_conversion.o
-int s21_from_decimal_to_float(s21_decimal src,
-                              float *dst); // s21_decimal_from_float(...).o
+int s21_from_int_to_decimal(int src, s21_decimal *dst);
+int s21_from_decimal_to_int(s21_decimal src, int *dst);
+int s21_from_decimal_to_float(s21_decimal src, float *dst);
+int s21_from_float_to_decimal(float src, s21_decimal *dst);
 
 // Арифметические операторы
 
@@ -61,10 +57,10 @@ int s21_is_equal(s21_decimal, s21_decimal);
 int s21_is_not_equal(s21_decimal, s21_decimal);
 
 // Дополнительные функции
-int s21_floor(s21_decimal value, s21_decimal *result);    // s21_decimal_other.o
-int s21_round(s21_decimal value, s21_decimal *result);    // s21_decimal_other.o
-int s21_truncate(s21_decimal value, s21_decimal *result); // s21_decimal_other.o
-int s21_negate(s21_decimal value, s21_decimal *result);   // s21_decimal_other.o
+int s21_floor(s21_decimal value, s21_decimal *result);
+int s21_round(s21_decimal value, s21_decimal *result);
+int s21_truncate(s21_decimal value, s21_decimal *result);
+int s21_negate(s21_decimal value, s21_decimal *result);
 
 /* Дополнительные функции - тут наши функции,
 которые могут понадобиться в процессе работы */
@@ -113,7 +109,6 @@ void scale_down(s21_big_decimal *dst, int value, s21_big_decimal *result);
 void big_mult(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 void big_add(s21_big_decimal a, s21_big_decimal b, s21_big_decimal *result);
 void big_div10(s21_big_decimal value, s21_big_decimal *result);
-int big_mul10(s21_big_decimal *value);
 
 int s21_data_eq(const unsigned *data1, const unsigned *data2, int size);
 int s21_data_gt(const unsigned *data1, const unsigned *data2, int size);
@@ -121,34 +116,19 @@ int s21_is_null(s21_decimal value);
 int s21_inc(s21_decimal *result);
 int s21_sum(const unsigned *val1, int sign1, const unsigned *val2, int sign2,
             unsigned *result, int *sign_result, int size);
-
 int s21_decimal_serialize(s21_decimal value, int fd);
 int s21_decimal_deserialize(s21_decimal *value, int fd);
 int s21_div10(s21_decimal value, s21_decimal *result);
-int s21_mul10(s21_decimal *value);
 int s21_mod10(s21_decimal value);
 int s21_get_scale(s21_decimal value);
 void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size);
-
-int s21_div10mem(unsigned *result, int size);
-
-int change_int_sign(int x);
-int get_int_sign(int num);
-void init_decimal(s21_decimal *src);
-
-int s21_divide_by_integer(s21_decimal value, int integer,
-                          s21_decimal *result); // s21_decimal_other.o
-int s21_modulo_by_integer(s21_decimal value,
-                          int integer); // s21_decimal_other.o
-int s21_add_integer(s21_decimal value, int integer,
-                    s21_decimal *result); // s21_decimal_other.o
-
-int s21_divide_by_power_of_10(s21_decimal value, int power,
-                              s21_decimal *result); // s21_decimal_other.o
-int s21_get_exponent(s21_decimal value);            // s21_decimal_other.o
-
-int s21_multiply_by_integer(
-    s21_decimal value, int integer,
-    s21_decimal *result); // s21_decimal_from_float(...).o
+void s21_negate_data(unsigned *value, int size);
+void s21_div2mem(unsigned *value, int size);
+int s21_mul2mem(unsigned *value, int size);
+void s21_div10mem(unsigned *value, unsigned *result, int size);
+void s21_data_add(unsigned *buf_1, unsigned *buf_2, unsigned *buf_result,
+                  int size);
+void s21_set_scale(s21_decimal *dst, int scale);
+int s21_mul10mem(unsigned *value, int size);
 
 #endif
