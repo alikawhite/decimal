@@ -182,12 +182,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   s21_to_scale(value_2, scale, buf_2, 6);
   scale = s21_get_scale(value_2) - s21_get_scale(value_1);
   while (s21_data_gt(buf_1, buf_2, 6)) {
-    s21_mul10mem(buf_2, 6);
-    scale++;
-  }
-  while (s21_data_gt(buf_2, buf_1, 6)) {
-    s21_mul2mem(buf_1, 6);
-    pow_2++;
+    s21_mul2mem(buf_2, 6);
   }
   unsigned buf_2_inv[6] = {0, 0, 0, 0, 0, 0};
   for (int i = 0; i < 6; i++) {
@@ -197,7 +192,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int counter = 0;
   while (
       (buf_1[0] || buf_1[1] || buf_1[2] || buf_1[3] || buf_1[4] || buf_1[5]) &&
-      (counter++) < 94) {
+      (counter++) < 96) {
     s21_mul2mem(buf_result, 6);
 
     if (s21_data_gt(buf_1, buf_2, 6) || s21_data_eq(buf_1, buf_2, 6)) {
