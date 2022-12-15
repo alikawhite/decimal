@@ -1,7 +1,9 @@
 **.input
 **.output
 
-**.o
-!objects/**.o
-**.a
-s21_decimal
+
+**/*.a
+**/s21_decimal
+**.exe
+**/*.o
+!objects/*.o

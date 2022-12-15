@@ -1,5 +1,76 @@
 #include "s21_decimal.h"
 
+int s21_divide_by_integer(s21_decimal value, int integer, s21_decimal *result) {
+  unsigned long long buf = 0ull;
+  unsigned long long div_buf = 0ull;
+  unsigned mod = 0;
+  for (int i = 2; i >= 0; i--) {
+
+    mod = (buf + value.bits[i]) % integer;
+    div_buf = (buf + value.bits[i]) / integer;
+    result->bits[i] = (unsigned)div_buf;
+    buf = mod;
+    buf = buf << 32;
+  }
+  return 0;
+}
+
+int s21_modulo_by_integer(s21_decimal value, int integer) {
+  unsigned long long buf = 0ull;
+  unsigned long long div_buf = 0ull;
+  unsigned long long mod = 0;
+  for (int i = 2; i >= 0; i--) {
+
+    mod = (buf + value.bits[i]) % integer;
+    div_buf = (buf + value.bits[i]) / integer;
+    buf = mod << 32;
+  }
+  return mod;
+}
+
+int s21_add_integer(s21_decimal value, int integer, s21_decimal *result) {
+  int status = S21_OK;
+  unsigned long long buf = 0ull + integer;
+  for (int i = 0; i < 3; i++) {
+    buf += value.bits[i];
+    value.bits[i] = (unsigned)buf;
+    buf >>= 32;
+  }
+  if (!buf) {
+    for (int i = 0; i < 4; i++) {
+      result->bits[i] = value.bits[i];
+    }
+  } else {
+    status = 1;
+  }
+  return status;
+}
+
+int s21_divide_by_power_of_10(s21_decimal value, int power,
+                              s21_decimal *result) {
+  int status = S21_OK;
+  for (int i = 0; i < power; i++) {
+    status = s21_divide_by_integer(value, 10, result);
+    value = *result;
+  }
+
+  return status;
+}
+int s21_get_exponent(s21_decimal value) {
+  int status = (value.bits[3] & 0x00FF0000) >> 16;
+
+  return status;
+}
+
+int s21_decimal_deserialize(s21_decimal *value, int fd) {
+  return read(fd, value->bits, sizeof(s21_decimal));
+}
+int s21_decimal_serialize(s21_decimal value, int fd) {
+  return write(fd, value.bits, sizeof(s21_decimal));
+}
+
+// ---------------------------------------------------
+
 int s21_negate(s21_decimal value, s21_decimal *result) {
   for (int i = 0; i < 4; i++) {
     result->bits[i] = value.bits[i];
@@ -51,72 +122,3 @@ int s21_floor(s21_decimal value, s21_decimal *result) {
 }
 
 // Вспомогательные функции
-
-int s21_divide_by_integer(s21_decimal value, int integer, s21_decimal *result) {
-  unsigned long long buf = 0ull;
-  unsigned long long div_buf = 0ull;
-  unsigned mod = 0;
-  for (int i = 2; i >= 0; i--) {
-
-    mod = (buf + value.bits[i]) % integer;
-    div_buf = (buf + value.bits[i]) / integer;
-    result->bits[i] = (unsigned)div_buf;
-    buf = mod;
-    buf = buf << 32;
-  }
-  return 0;
-}
-
-int s21_modulo_by_integer(s21_decimal value, int integer) {
-  unsigned long long buf = 0ull;
-  unsigned long long div_buf = 0ull;
-  unsigned mod = 0;
-  for (int i = 2; i >= 0; i--) {
-
-    mod = (buf + value.bits[i]) % integer;
-    div_buf = (buf + value.bits[i]) / integer;
-    buf = mod << 32;
-  }
-  return mod;
-}
-
-int s21_add_integer(s21_decimal value, int integer, s21_decimal *result) {
-  int status = S21_OK;
-  unsigned long long buf = 0ull + integer;
-  for (int i = 0; i < 3; i++) {
-    buf += value.bits[i];
-    value.bits[i] = (unsigned)buf;
-    buf >>= 32;
-  }
-  if (!buf) {
-    for (int i = 0; i < 4; i++) {
-      result->bits[i] = value.bits[i];
-    }
-  } else {
-    status = 1;
-  }
-  return status;
-}
-
-int s21_divide_by_power_of_10(s21_decimal value, int power,
-                              s21_decimal *result) {
-  int status = S21_OK;
-  for (int i = 0; i < power; i++) {
-    status = s21_divide_by_integer(value, 10, result);
-    value = *result;
-  }
-
-  return status;
-}
-int s21_get_exponent(s21_decimal value) {
-  int status = (value.bits[3] & 0x00FF0000) >> 16;
-
-  return status;
-}
-
-int s21_decimal_deserialize(s21_decimal *value, int fd) {
-  return read(fd, value->bits, sizeof(s21_decimal));
-}
-int s21_decimal_serialize(s21_decimal value, int fd) {
-  return write(fd, value.bits, sizeof(s21_decimal));
-}

@@ -5,6 +5,10 @@
     "*.check": "c",
     "ostream": "c",
     "*.tcc": "c",
-    "s21_decimal.h": "c"
+    "s21_decimal.h": "c",
+    "string.h": "c",
+    "locale": "c",
+    "atomic": "c",
+    "bitset": "c"
   }
 }

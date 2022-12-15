@@ -13,7 +13,7 @@ all: s21_decimal.a
 rebuild: clean all
 
 s21_decimal.a: $(OBJECTS) s21_decimal.h
-	@ar rc $@ $(OBJECTS) 
+	@ar rc $@ $(OBJECTS)
 	@ranlib $@
 
 lib_cov.a: $(SOURCES) s21_decimal.h
@@ -53,7 +53,7 @@ decimalizator: clean $(TESTS_SOURSES) s21_decimal.a
 	mono tests/gen.exe
 	checkmk $(TESTS_SOURSES) > .test.c
 	$(CC) .test.c -lcheck -lm s21_decimal.a -o test -D"DECIMALIZATOR"
-	-./test &> /dev/null
+	-./test 
 	csc /out:tests/dec.exe tests/decimalizator.cs
 	mono tests/dec.exe
 
