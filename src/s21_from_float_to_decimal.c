@@ -52,19 +52,13 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
         j++;
       }
     }
-    printf("\n");
-    for (long unsigned int i = 0; i < strlen(flts); i++) {
-      printf("%c ", flts[i]);
-    }
     int _exp10 = 0;
     int _mantissa = 0;
     int tmp = 0;
-    // char sign = flts[8];
     sscanf(numb, "%d", &_mantissa);
-    sscanf(flts, "%d.%de%c%d", &tmp, &tmp, &numb[0],
-           &_exp10);  // scale!!!!!!!!!!!
-    dst->bits[0] = _mantissa;
-    s21_set_scale(dst, _exp10);
+    sscanf(flts, "%d.%de%c%d", &tmp, &tmp, &numb[0], &_exp10);
+    dst->bits[0] = (_mantissa);
+    s21_set_scale(dst, 6 - _exp10);
   }
   return result;
 }

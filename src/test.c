@@ -2,10 +2,14 @@
 
 int main() {
   s21_decimal a;
-  float b = 1345.1111112;
+  float b = 345.1111112;
   s21_from_float_to_decimal(b, &a);
   return 0;
 }
+
+// for (int i = 0; i < 4; i++) {
+//   printf("|%d|", dst->bits[i]);
+// }
 
 // if (sign_int) {
 // for (long unsigned int i = 0; i < strlen(flts); i++) {
