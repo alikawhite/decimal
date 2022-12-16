@@ -74,6 +74,7 @@ void s21_negate_data(unsigned *value, int size) {
     buf >>= 32;
   }
 }
+
 void s21_data_add(unsigned *buf_1, unsigned *buf_2, unsigned *buf_result,
                   int size) {
   unsigned long long buf = 0ull;
