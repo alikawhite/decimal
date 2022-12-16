@@ -17,7 +17,7 @@ s21_decimal.a: $(OBJECTS) s21_decimal.h
 	@ranlib $@
 
 lib_cov.a: $(SOURCES) s21_decimal.h
-	@$(CC) $(CFLAGS) -c *.c -g $(GCOVFLAGS)	
+	@$(CC) $(CFLAGS) -c *.c -g $(GCOVFLAGS) --coverage	
 	@ar rc $@ *.o
 	ranlib $@
 
@@ -30,16 +30,16 @@ lib_cov.a: $(SOURCES) s21_decimal.h
 	@rm -f $@.c
 	@./$@ 
 
-gcov_report: clean $(TESTS_SOURSES) lib_cov.a
-	@checkmk $(TESTS_SOURSES) > .test.c
-	@grep -v -e"#line " .test.c > test.c
-	@$(CC) test.c -c
-	@$(CC) test.o -g -L. -lcheck lib_cov.a -o test $(GCOVFLAGS)
-	@./test &> /dev/null
-	@lcov -t "t" -o test.info -c -d .  &> /dev/null
-	@genhtml -o report test.info  &> /dev/null
-	@open ./report/index.html
-	@rm -f test.c
+gcov_report: clean decimalizator $(TESTS_SOURSES) lib_cov.a
+	checkmk $(TESTS_SOURSES) > .test.c
+	grep -v -e"#line " .test.c > test.c
+	$(CC) test.c -c --coverage -g -D"DECIMALIZATOR"
+	$(CC) test.o -g -L. -lcheck lib_cov.a -o test $(GCOVFLAGS)  
+	-./test 
+	lcov -t "t" -o test.info -c -d .  &> /dev/null
+	genhtml -o report test.info  &> /dev/null
+	open ./report/index.html
+	rm -f test.c
 
 test: clean $(TESTS_SOURSES) s21_decimal.a
 	csc /out:tests/gen.exe tests/generator.cs

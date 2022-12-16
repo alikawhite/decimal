@@ -149,6 +149,15 @@ class Program
           writer.Write(i / j);
         }
       }
+      for (decimal i = 1m; i < 100m; i += 100m / 20m)
+      {
+        for (decimal j = 1m; j < 100m; j += 100m / 20m)
+        {
+          writer.Write(i);
+          writer.Write(j);
+          writer.Write(i / j);
+        }
+      }
     }
   }
   public static void s21_mod()

@@ -17,7 +17,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_add(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
@@ -39,7 +39,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_sub(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
@@ -62,7 +62,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_mul(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
@@ -84,7 +84,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_div(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
@@ -106,7 +106,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_mod(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
