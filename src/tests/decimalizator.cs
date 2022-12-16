@@ -13,7 +13,7 @@ class Decimalizator
     s21_add();
     s21_sub();
     s21_mul();
-    s21_div();
+    //s21_div();
     // s21_mod();
 
     s21_is_equal();
@@ -25,8 +25,10 @@ class Decimalizator
 
     s21_from_int_to_decimal();
     s21_from_decimal_to_int();
-    // // ?//s21_from_decimal_to_float();
-    // // ?//s21_from_float_to_decimal();
+
+    s21_from_decimal_to_float();
+
+    //s21_from_float_to_decimal();
 
     s21_negate();
     s21_truncate();
@@ -66,8 +68,8 @@ class Decimalizator
       }
       else
       {
-
-        Console.WriteLine("ERROR: in {0}: {1} + ({2}) = {3} (!= {4} (~({5})))", testname, op1, op2, result, op1 + op2, result - (op1 + op2));
+        //if (!silence)
+        { Console.WriteLine("ERROR: in {0}: {1} + ({2}) = {3} (!= {4} (~({5})))", testname, op1, op2, result, op1 + op2, result - (op1 + op2)); }
       }
 
 
@@ -106,7 +108,7 @@ class Decimalizator
       }
       else
       {
-
+        //if (!silence)
         Console.WriteLine("ERROR: in {0}: {1} - ({2}) = {3} (!= {4} (~({5})))", testname, op1, op2, result, op1 - op2, result - (op1 - op2));
       }
 
@@ -769,7 +771,7 @@ class Decimalizator
       else
       {
 
-        Console.WriteLine("ERROR: in {0}: {1} == {2} (!= {3})", testname, result, op2, ((decimal)op1));
+        Console.WriteLine("ERROR: in {0}: {1} != {2} (!= {3})", testname, result, op2, ((decimal)op1));
       }
       all++;
     }
@@ -799,7 +801,7 @@ class Decimalizator
 
       try
       {
-        if ((float)op1 == result)
+        if (Math.Abs((float)op1 - result) < 1e-6)
         {
           ok++;
           if (!silence)
@@ -811,7 +813,7 @@ class Decimalizator
         else
         {
 
-          Console.WriteLine("ERROR: in {0}: {1} == {2} (!= {3})", testname, op1, op2, (float)op1);
+          Console.WriteLine("ERROR: in {0}: {1} != {2}", testname, (float)op1, result);
         }
       }
       catch (System.Exception)

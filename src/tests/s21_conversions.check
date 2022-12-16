@@ -74,7 +74,7 @@ int output = open("s21_from_float_to_decimal.output",
 int fd = open("s21_from_float_to_decimal.input", O_RDONLY);
 s21_decimal a;
 s21_decimal b;
-float res;
+float_t res;
 
 while ((read(fd, &res, sizeof(res)) > 0) && s21_decimal_deserialize(&a, fd)) {
   s21_from_float_to_decimal(res, &b);
@@ -82,7 +82,7 @@ while ((read(fd, &res, sizeof(res)) > 0) && s21_decimal_deserialize(&a, fd)) {
 
   ck_assert(s21_data_equal(a, b));
 #else
-  write(output, &b, sizeof(b));
+  s21_decimal_serialize(b, output);
 #endif
 }
 

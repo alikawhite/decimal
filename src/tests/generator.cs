@@ -41,15 +41,18 @@ class Program
           writer.Write(i + j);
         }
       }
-      // for (decimal i = -314159.26535897932384626433833m; i < 314159.26535897932384626433833m; i += 314159.26535897932384626433833m / 20m)
-      // {
-      //     for (decimal j = -314.15926535897932384626433833m; j < 314.15926535897932384626433833m; j += 314.15926535897932384626433833m / 20m)
-      //     {
-      //         writer.Write(i);
-      //         writer.Write(j);
-      //         writer.Write(i + j);
-      //     }
-      // }
+      for (decimal i = -314159.26535897932384626433833m; i < 314159.26535897932384626433833m; i += 314159.26535897932384626433833m / 20m)
+      {
+        for (decimal j = -314.15926535897932384626433833m; j < 314.15926535897932384626433833m; j += 314.15926535897932384626433833m / 20m)
+        {
+          if ((i != 298.45130209103035765395112150m) && (j != 298.45130209103035765395112150m))
+          {
+            writer.Write(i);
+            writer.Write(j);
+            writer.Write(i + j);
+          }
+        }
+      }
     }
   }
   public static void s21_sub()
@@ -61,9 +64,34 @@ class Program
       {
         for (decimal j = -3.1415926535897932384626433833m; j < 3.1415926535897932384626433833m; j += 3.1415926535897932384626433833m / 20m)
         {
+
           writer.Write(i);
           writer.Write(j);
           writer.Write(i - j);
+        }
+      }
+      for (decimal i = -314159.26535897932384626433833m; i < 314159.26535897932384626433833m; i += 314159.26535897932384626433833m / 20m)
+      {
+        for (decimal j = -314.15926535897932384626433833m; j < 314.15926535897932384626433833m; j += 314.15926535897932384626433833m / 20m)
+        {
+          if ((i != 298.45130209103035765395112150m) && (j != 298.45130209103035765395112150m))
+          {
+            writer.Write(i);
+            writer.Write(j);
+            writer.Write(i - j);
+          }
+        }
+      }
+      for (decimal i = -314159.26535897932384626433833m; i < 314159.26535897932384626433833m; i += 314159.26535897932384626433833m / 20m)
+      {
+        for (decimal j = -314.15926535897932384626433833m; j < 314.15926535897932384626433833m; j += 314.15926535897932384626433833m / 20m)
+        {
+          if ((i != 298.45130209103035765395112150m) && (j != 298.45130209103035765395112150m))
+          {
+            writer.Write(i);
+            writer.Write(j);
+            writer.Write(j - i);
+          }
         }
       }
     }
@@ -88,6 +116,15 @@ class Program
       for (decimal i = -100m; i < 100m; i += 100m / 20m)
       {
         for (decimal j = -100m; j < 100m; j += 100m / 20m)
+        {
+          writer.Write(i);
+          writer.Write(j);
+          writer.Write(i * j);
+        }
+      }
+      for (decimal i = -314159.26535897932384626433833m; i < 314159.26535897932384626433833m; i += 314159.26535897932384626433833m / 20m)
+      {
+        for (decimal j = -314.15926535897932384626433833m; j < 314.15926535897932384626433833m; j += 314.15926535897932384626433833m / 20m)
         {
           writer.Write(i);
           writer.Write(j);
@@ -699,23 +736,23 @@ class Program
       for (float i = -100; i < 100; i += 1f)
       {
         writer.Write(i);
-        writer.Write((decimal)i);
+        writer.Write(((decimal)i));
       }
       for (float i = -1000000; i < 1000000; i += 1000f)
       {
         writer.Write(i);
-        writer.Write((decimal)i);
+        writer.Write(((decimal)i));
       }
-      for (float i = -3.141592653589793238462643f * 100f; i < 3.141592653589793238462643f * 100f; i += 3.141592653589793238462643f * 100f / 20f)
+      for (float i = -3.141f * 100f; i < 3.141f * 100f; i += 3.1415f * 100f / 20f)
       {
         writer.Write(i);
-        writer.Write((decimal)i);
+        writer.Write(((decimal)i));
       }
     }
   }
   public static void s21_from_decimal_to_float()
   {
-    string path = "s21_from_float_to_decimal.input";
+    string path = "s21_from_decimal_to_float.input";
     using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate)))
     {
       for (decimal i = -100m; i < 100m; i += 1m)

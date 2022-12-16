@@ -23,22 +23,3 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst) {
 
   return status;
 }
-
-int s21_from_decimal_to_float(s21_decimal src, float *dst) {
-  int scale = s21_get_scale(src);
-  while (!(src.bits[2] == 0 && src.bits[1] == 0 && src.bits[0] > 100000000)) {
-    s21_div10(src, &src);
-    scale--;
-  }
-  if (src.bits[0] <= 10000000) {
-    src.bits[0] += 5;
-    s21_div10(src, &src);
-    scale--;
-  }
-  char buf[32] = {0};
-  sprintf(buf, "%c%de%d", (src.bits[3] & 0x80000000 ? '-' : '+'), src.bits[0],
-          -scale);
-  sscanf(buf, "%e", dst);
-  return 0;
-}
-int s21_from_float_to_decimal(float src, s21_decimal *dst) {}
