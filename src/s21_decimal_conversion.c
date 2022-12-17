@@ -53,16 +53,8 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
   } else {
     char flts[64];
     sprintf(flts, "%.6e", src);
-    int sign_int = 1;
-    if (src > 0)
-      sign_int = 0;
-
-    if (sign_int) {
-      for (long unsigned int i = 0; flts[i] != '\0'; i++) {
-        flts[i] = flts[i + 1];
-      }
-      s21_set_sign(dst);
-    }
+    int sign_int = (src > 0 ? 0 : 1);
+    src = fabsf(src);
     char numb[64];
     int j = 0;
     for (unsigned long int i = 0; i < strlen(flts); i++) {
@@ -80,8 +72,9 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
     int tmp = 0;
     sscanf(numb, "%d", &_mantissa);
     sscanf(flts, "%d.%de%d", &tmp, &tmp, &_exp10);
-    dst->bits[0] = (_mantissa);
+    dst->bits[0] = abs(_mantissa);
     int last_digit = 0;
+    _exp10 = 6 - _exp10;
     while (_exp10 > 28) {
       last_digit = s21_mod10mem(dst->bits, 3);
       s21_div10mem(dst->bits, dst->bits, 3);
@@ -96,7 +89,10 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
       s21_mul10mem(dst->bits, 3);
       _exp10++;
     }
-    s21_set_scale(dst, 6 - _exp10);
+    if (sign_int) {
+      dst->bits[3] = 0x80000000;
+    }
+    s21_set_scale(dst, _exp10);
   }
   return result;
 }

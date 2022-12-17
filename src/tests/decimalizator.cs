@@ -14,7 +14,7 @@ class Decimalizator
     s21_sub();
     s21_mul();
     // s21_div();
-    // s21_mod();
+    //s21_mod();
 
     s21_is_equal();
     s21_is_not_equal();
