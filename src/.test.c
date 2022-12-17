@@ -27,7 +27,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_add(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
@@ -54,7 +54,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_sub(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
@@ -82,7 +82,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_mul(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
@@ -109,7 +109,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_div(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
@@ -136,7 +136,7 @@ while (s21_decimal_deserialize(&a, fd) && s21_decimal_deserialize(&b, fd) &&
        s21_decimal_deserialize(&et, fd)) {
   s21_mod(a, b, &res);
 #ifndef DECIMALIZATOR
-  ck_assert((s21_is_equal(et, res)));
+  ck_assert(s21_is_equal(et, res));
 #else
   s21_decimal_serialize(res, output);
 #endif
@@ -352,7 +352,7 @@ while ((read(fd, &res, sizeof(int)) > 0) && s21_decimal_deserialize(&a, fd)) {
   s21_from_int_to_decimal(res, &b);
 #ifndef DECIMALIZATOR
 
-  ck_assert(s21_data_equal(a, b));
+  ck_assert(s21_is_equal(a, b));
 #else
   write(output, &b, sizeof(b));
 #endif
@@ -400,15 +400,15 @@ int output = open("s21_from_float_to_decimal.output",
 int fd = open("s21_from_float_to_decimal.input", O_RDONLY);
 s21_decimal a;
 s21_decimal b;
-float res;
+float_t res;
 
 while ((read(fd, &res, sizeof(res)) > 0) && s21_decimal_deserialize(&a, fd)) {
   s21_from_float_to_decimal(res, &b);
 #ifndef DECIMALIZATOR
 
-  ck_assert(s21_data_equal(a, b));
+  ck_assert(s21_data_eq(a.bits, b.bits, 4));
 #else
-  write(output, &b, sizeof(b));
+  s21_decimal_serialize(b, output);
 #endif
 }
 

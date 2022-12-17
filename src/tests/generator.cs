@@ -752,7 +752,12 @@ class Program
         writer.Write(i);
         writer.Write(((decimal)i));
       }
-      for (float i = -3.141f * 100f; i < 3.141f * 100f; i += 3.1415f * 100f / 20f)
+      for (float i = -3.141518f * 100f; i < 3.141f * 100f; i += 3.141518f * 100f / 20f)
+      {
+        writer.Write(i);
+        writer.Write(((decimal)i));
+      }
+      for (float i = -3.141518e28f; i < 3.141e28f; i += 3.141518e28f / 20f)
       {
         writer.Write(i);
         writer.Write(((decimal)i));

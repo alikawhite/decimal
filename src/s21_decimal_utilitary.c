@@ -215,6 +215,10 @@ int s21_multiply_by_integer_mem(unsigned *value, int size_v, int integer,
   return status;
 }
 
+int s21_mul10mem(unsigned *value, int size) {
+  return s21_multiply_by_integer_mem(value, 6, 10, value, 6);
+}
+
 void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size) {
   for (int i = 0; i < size; i++) {
     result[i] = 0;

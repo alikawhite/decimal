@@ -13,7 +13,7 @@ class Decimalizator
     s21_add();
     s21_sub();
     s21_mul();
-    s21_div();
+    // s21_div();
     // s21_mod();
 
     s21_is_equal();
@@ -27,8 +27,7 @@ class Decimalizator
     s21_from_decimal_to_int();
 
     s21_from_decimal_to_float();
-
-    //s21_from_float_to_decimal();
+    s21_from_float_to_decimal();
 
     s21_negate();
     s21_truncate();
