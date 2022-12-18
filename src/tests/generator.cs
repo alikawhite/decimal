@@ -140,6 +140,9 @@ class Program
     string path = "s21_div.input";
     using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.OpenOrCreate)))
     {
+      writer.Write(32.80000m);
+      writer.Write(8.000m);
+      writer.Write(32.80000m / 8.000m);
       for (decimal i = -3.1415926535897932384626433833m; i < 3.1415926535897932384626433833m; i += 3.1415926535897932384626433833m / 20m)
       {
         for (decimal j = -3.1415926535897932384626433833m; j < 3.1415926535897932384626433833m; j += 3.1415926535897932384626433833m / 20m)
@@ -158,7 +161,26 @@ class Program
           writer.Write(i / j);
         }
       }
+      for (decimal i = -3.1415926535897932384626433833m; i < 3.1415926535897932384626433833m; i += 3.1415926535897932384626433833m / 20m)
+      {
+        for (decimal j = -314159.26535897932384626433833m; j < 314159.26535897932384626433833m; j += 314159.26535897932384626433833m / 20m)
+        {
+          writer.Write(i);
+          writer.Write(j);
+          writer.Write(i / j);
+        }
+      }
+      // for (decimal i = -314159.26535897932384626433833m; i < 314159.26535897932384626433833m; i += 314159.26535897932384626433833m / 20m)
+      // {
+      //   for (decimal j = -3.1415926535897932384626433833m; j < 3.1415926535897932384626433833m; j += 3.1415926535897932384626433833m / 20m)
+      //   {
+      //     writer.Write(i);
+      //     writer.Write(j);
+      //     writer.Write(i / j);
+      //   }
+      // }
     }
+
   }
   public static void s21_mod()
   {

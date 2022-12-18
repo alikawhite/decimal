@@ -81,7 +81,7 @@ void s21_div10mem(unsigned *value, unsigned *result, int size) {
 
 void s21_set_scale(s21_decimal *dst, int scale) {
 
-  dst->bits[3] = (dst->bits[3] & 0x80000000) | ((scale & 0xFF) << 16);
+  dst->bits[3] |= ((scale & 0xFF) << 16);
 }
 
 void s21_div2mem(unsigned *value, int size) {
@@ -217,6 +217,21 @@ int s21_multiply_by_integer_mem(unsigned *value, int size_v, int integer,
 
 int s21_mul10mem(unsigned *value, int size) {
   return s21_multiply_by_integer_mem(value, 6, 10, value, 6);
+}
+
+void s21_mul_pow10mem(unsigned *value, int pow, int size) {
+  for (; pow >= 8; pow -= 8) {
+    s21_multiply_by_integer_mem(value, size, 100000000, value, size);
+  }
+  for (; pow >= 4; pow -= 4) {
+    s21_multiply_by_integer_mem(value, size, 10000, value, size);
+  }
+  for (; pow >= 2; pow -= 2) {
+    s21_multiply_by_integer_mem(value, size, 100, value, size);
+  }
+  for (; pow >= 1; pow -= 1) {
+    s21_multiply_by_integer_mem(value, size, 10, value, size);
+  }
 }
 
 void s21_to_scale(s21_decimal value, int scale, unsigned *result, int size) {

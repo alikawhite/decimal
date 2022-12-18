@@ -75,15 +75,15 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
     dst->bits[0] = abs(_mantissa);
     int last_digit = 0;
     _exp10 = 6 - _exp10;
-    while (_exp10 > 28) {
-      last_digit = s21_mod10mem(dst->bits, 3);
-      s21_div10mem(dst->bits, dst->bits, 3);
-      _exp10--;
-    }
-    if (last_digit >= 5) {
-      unsigned carry[3] = {1, 0, 0};
-      s21_data_add(dst->bits, carry, dst->bits, 3);
-    }
+    // while (_exp10 > 28) {
+    //   last_digit = s21_mod10mem(dst->bits, 3);
+    //   s21_div10mem(dst->bits, dst->bits, 3);
+    //   _exp10--;
+    // }
+    // if (last_digit >= 5) {
+    //   unsigned carry[3] = {1, 0, 0};
+    //   s21_data_add(dst->bits, carry, dst->bits, 3);
+    // }
     while (_exp10 < 0) {
       last_digit = s21_mod10mem(dst->bits, 3);
       s21_mul10mem(dst->bits, 3);

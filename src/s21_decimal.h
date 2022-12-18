@@ -99,5 +99,5 @@ int s21_multiply_by_integer_mem(unsigned *value, int size_v, int integer,
                                 unsigned *result, int size_r);
 void s21_data_sub(unsigned *buf_1, unsigned *buf_2, unsigned *buf_result,
                   int size);
-
+void s21_mul_pow10mem(unsigned *value, int pow, int size);
 #endif
