@@ -102,8 +102,8 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   if (value_2.bits[0] == 0 && value_2.bits[1] == 0 && value_2.bits[2] == 0) {
     err = 3;
   } else {
-    s21_decimal value_1f = {.bits = {value_1.bits[0], value_1.bits[0],
-                                     value_1.bits[0], value_1.bits[0]}};
+    s21_decimal value_1f = {.bits = {value_1.bits[0], value_1.bits[1],
+                                     value_1.bits[2], value_1.bits[3]}};
     s21_truncate(value_1, &value_1f);
     s21_sub(value_1, value_1f, &value_1f);
     unsigned buf_1[6] = {0, 0, 0, 0, 0, 0};
@@ -116,7 +116,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       buf_1f[i] = value_1f.bits[i];
     }
 
-    // integer gigits
+    // integer digits
     // int integer_digits_1 = -s21_get_scale(value_1);
     // while (!s21_is_null(value_1)) {
     //   integer_digits_1++;
@@ -128,6 +128,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     s21_mul_pow10mem(buf_1f, 28, 6);
     while (s21_data_gt(buf_1, buf_2, 6)) {
       s21_mul_pow10mem(buf_2, 1, 6);
+      scale--;
     }
     int flag_dot = 0;
     int fraction_digits = 0;
@@ -175,12 +176,12 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     //   s21_div10(value_2, &value_2);
     //   scale--;
     // }
-    if (!(buf_result[5] || buf_result[4] || buf_result[3]) &&
-        (scale >= 0 && scale <= 28)) {
+    if (!(buf_result[5] || buf_result[4] || buf_result[3])) {
       for (int i = 0; i < 3; i++) {
         result->bits[i] = buf_result[i];
       }
-      result->bits[3] = sign << 31 | ((fraction_digits && 0xff) << 16);
+      result->bits[3] = (sign << 31);
+      s21_set_scale(result, s21_get_scale(value_1));
     } else {
       err = 1 + sign;
     }
