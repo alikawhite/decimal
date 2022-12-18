@@ -10,29 +10,31 @@ class Decimalizator
     String testname = "s21_decimal";
     Console.WriteLine("DECIMALIZATOR 2000: {0}", testname);
 
-    // s21_add();
-    // s21_sub();
-    // s21_mul();
+    s21_add();
+    s21_sub();
+    s21_mul();
+
+    s21_is_equal();
+    s21_is_not_equal();
+    s21_is_greater();
+    s21_is_greater_or_equal();
+    s21_is_less();
+    s21_is_less_or_equal();
+
+    s21_from_int_to_decimal();
+    s21_from_decimal_to_int();
+
+    s21_from_decimal_to_float();
+    s21_from_float_to_decimal();
+
+    s21_negate();
+    s21_truncate();
+    s21_floor();
+    s21_round();
+
+
     s21_div();
-    //s21_mod();
-
-    // s21_is_equal();
-    // s21_is_not_equal();
-    // s21_is_greater();
-    // s21_is_greater_or_equal();
-    // s21_is_less();
-    // s21_is_less_or_equal();
-
-    // s21_from_int_to_decimal();
-    // s21_from_decimal_to_int();
-
-    // s21_from_decimal_to_float();
-    // s21_from_float_to_decimal();
-
-    // s21_negate();
-    // s21_truncate();
-    // s21_floor();
-    // s21_round();
+    // s21_mod();
   }
 
 

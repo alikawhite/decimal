@@ -110,7 +110,6 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       buf_1[i] = value_1.bits[i];
       buf_2[i] = value_2.bits[i];
     }
-
     int len_a = 0;
     int len_b = 0;
     int mod = 0;
@@ -122,18 +121,16 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       s21_div10(value_2, &value_2);
       len_b++;
     }
+    int int_num = len_a - scale_1 - (len_b - scale_2);
+    scale = 0;
 
-    scale = scale_1 - scale_2 - len_a + len_b;
-
+    //--------------------------------------------------
     unsigned buf_result[6] = {0, 0, 0, 0, 0, 0};
-
     s21_mul_pow10mem(buf_1, 28, 6);
     s21_mul_pow10mem(buf_2, 28, 6);
-
     while (s21_data_gt(buf_1, buf_2, 6)) {
       s21_mul_pow10mem(buf_2, 1, 6);
     }
-
     int div_flag = 0;
     int div_count = 0;
 
@@ -146,20 +143,26 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
         div_flag = 1;
         s21_data_sub(buf_1, buf_2, buf_1, 6);
         buf_result[0] += 1;
-        div_flag = 1;
       }
       if (div_flag) {
         div_count++;
       }
-
+      if (int_num < 0) {
+        scale++;
+      }
       s21_div10mem(buf_2, buf_2, 6);
     }
+    //--------------------------------------------------
 
+    while (scale < 0) {
+      s21_mul10mem(buf_result, 6);
+      scale++;
+    }
     int last_digit = 0;
-    while (div_count > 29) {
+    while ((buf_result[5] || buf_result[4] || buf_result[3]) || scale > 28) {
       last_digit = s21_mod10mem(buf_result, 6);
       s21_div10mem(buf_result, buf_result, 6);
-      div_count--;
+      scale--;
     }
     if (last_digit >= 5) {
       unsigned carry[6] = {1, 0, 0, 0, 0, 0};
@@ -171,12 +174,12 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       for (int i = 0; i < 3; i++) {
         result->bits[i] = buf_result[i];
       }
+      result->bits[3] = sign << 31 | scale && 0xff << 16;
     } else {
       err = 1 + sign;
     }
   }
-  result->bits[3] = sign << 31;
-  s21_set_scale(result, scale);
+
   return err;
 }
 
