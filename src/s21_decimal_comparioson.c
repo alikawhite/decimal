@@ -1,61 +1,43 @@
 #include "s21_decimal.h"
 
-int main() {
-  s21_decimal src1, src2;
-  int origin;
-  // src1 = -9878798789.5867800;
-  // src2 = -9878798789.58678;
-  src1.bits[0] = 0b11001110100110111101100110011000;
-  src1.bits[1] = 0b00000001010111101111011100100110;
-  src1.bits[2] = 0b00000000000000000000000000000000;
-  src1.bits[3] = 0b10000000000001110000000000000000;
-  src2.bits[0] = 0b10110101010001000001111001010110;
-  src2.bits[1] = 0b00000000000000111000001001111000;
-  src2.bits[2] = 0b00000000000000000000000000000000;
-  src2.bits[3] = 0b10000000000001010000000000000000;
-  // unsigned die = {0};
+// int main() {
+//   s21_decimal src1, src2;
+//   int origin;
+//   // src1 = -9878798789.5867800;
+//   // src2 = -9878798789.58678;
+//   src1.bits[0] = 0b11001110100110111101100110011000;
+//   src1.bits[1] = 0b00000001010111101111011100100110;
+//   src1.bits[2] = 0b00000000000000000000000000000000;
+//   src1.bits[3] = 0b10000000000001110000000000000000;
+//   src2.bits[0] = 0b10110101010001000001111001010110;
+//   src2.bits[1] = 0b00000000000000111000001001111000;
+//   src2.bits[2] = 0b00000000000000000000000000000000;
+//   src2.bits[3] = 0b10000000000001010000000000000000;
+//   // unsigned die = {0};
 
-  // die = src1.bits[0];
-  // for (int i = 0; i < 4; i++) {
-  //   printf("%x88  ", die[i]);
-  // }
-  s21_last_zeroes(&src1);
-  int result = s21_is_greater(src1, src2);
-  origin = 0;
-  if (origin == result)
-    printf("ok");
-  else
-    printf("no");
-  return 0;
-}
-
-// int s21_get_bit(s21_decimal d, int i) {
-//   unsigned int mask = 1u << (i % 32);
-//   int r = 0;
-//   if (i <= 95 && i >= 0) {
-//     r = d.bits[i / 32] & mask;
+//   // die = src1.bits[0];
+//   // s21_last_zeroes(&src1);
+//   int result = s21_is_greater(src1, src2);
+//   for (int i = 0; i < 4; i++) {
+//     printf("%d|", src1.bits[i]);
 //   }
-//   return r;
+//   origin = 0;
+//   if (origin == result)
+//     printf("ok");
+//   else
+//     printf("no");
+//   return 0;
 // }
 
-// int s21_get_bit_mem(unsigned int value, int i) {
-//   unsigned int mask = 1u << (i % 32);
-//   int r = 0;
-//     r = value[0] & mask;
-//   }
-//   return r;
-// }
-
-void s21_last_zeroes(s21_decimal *value) {
-  // int digit = 0;
-  unsigned buf[3 n] = {0, 0, 0};
-  for (int i = 0; i < 3; i++) {
-    buf[i] = value->bits[i];
+int s21_last_zeroes(s21_decimal *value) {
+  int digit = 0;
+  for (int i = 0; i < 2; i++) {
+    if (value->bits[i] % 10 == 0) {
+      value->bits[i] /= 10;
+      ++digit;
+    }
   }
-  while ((buf[0] << 31) != 1) {
-    s21_mul10mem(buf, 3);
-  }
-  // return digit;
+  return digit;
 }
 
 int s21_is_greater(s21_decimal value_1, s21_decimal value_2) {
@@ -73,8 +55,11 @@ int s21_is_greater(s21_decimal value_1, s21_decimal value_2) {
       int scale = s21_get_scale(value_1) >= s21_get_scale(value_2)
                       ? s21_get_scale(value_1)
                       : s21_get_scale(value_2);
-      s21_to_scale(value_1, scale, buf1, 6);
-      s21_to_scale(value_2, scale, buf2, 6);
+
+      int new_scale_1 = s21_last_zeroes(&value_1);
+      int new_scale_2 = s21_last_zeroes(&value_2);
+      s21_to_scale(value_1, scale - new_scale_1, buf1, 6);
+      s21_to_scale(value_2, scale - new_scale_2, buf2, 6);
       result = s21_data_gt(buf1, buf2, 6);
       if (s21_get_sign(value_1))
         result = !result;

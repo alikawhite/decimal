@@ -97,7 +97,7 @@ void s21_data_sub(unsigned *buf_1, unsigned *buf_2, unsigned *buf_result,
                   int size);
 void s21_mul_pow10mem(unsigned *value, int pow, int size);
 
-void s21_last_zeroes(s21_decimal *value);
+int s21_last_zeroes(s21_decimal *value);
 int s21_get_bit(s21_decimal d, int i);
 int s21_get_bit_mem(unsigned value, int i);
 #endif
